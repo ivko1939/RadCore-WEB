@@ -1,0 +1,1202 @@
+<!DOCTYPE html>
+<html lang="ru" data-theme="dark">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>RadCore — Minecraft SMP RPG с расами</title>
+<meta name="description" content="RadCore — выживание без приватов с 8 уникальными расами. IP: rc.trick-game.net · 1.20.5–1.21.11+">
+<meta name="theme-color" content="#0D110F">
+<meta property="og:title" content="RadCore — Minecraft SMP RPG">
+<meta property="og:description" content="8 рас. Один мир. Без приватов. IP: rc.trick-game.net">
+<meta property="og:type" content="website">
+<link rel="icon" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 10 10' fill='%23A6D13C'%3E%3Cpath d='M4 0h2v3H4zM1 1h2v2H1zM7 1h2v2H7zM1 2h8v1H1zM2 3h2v1H2zM6 3h2v1H6zM0 4h3v2H0zM4 4h2v2H4zM7 4h3v2H7zM2 6h2v1H2zM6 6h2v1H6zM1 7h8v1H1zM1 7h2v2H1zM7 7h2v2H7zM4 7h2v3H4z'/%3E%3C/svg%3E">
+<script>try{var s=localStorage.getItem('rc-theme');if(s==='light'||s==='dark')document.documentElement.dataset.theme=s;document.documentElement.classList.add('js')}catch(e){}</script>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=Press+Start+2P&family=Rubik:wght@400;500;600;700&display=swap" rel="stylesheet">
+<style>
+:root,:root[data-theme="dark"]{
+  --bg:#0D110F; --surface:rgba(255,255,255,.04); --surface2:rgba(255,255,255,.07); --line:rgba(255,255,255,.09); --hdr:rgba(13,17,15,.8);
+  --text:#E7ECE8; --muted:#8E998F; --accent:#A6D13C; --fill:#A6D13C; --onfill:#10180A; --good:#7FCB8F; --bad:#E27A74; --warn:#E3B445;
+  --orb1:rgba(166,209,60,.10); --orb2:rgba(80,120,108,.15); --sh:0 1px 2px rgba(0,0,0,.3),0 14px 40px rgba(0,0,0,.22);
+  --px:'Press Start 2P',monospace; --sans:'Rubik',system-ui,sans-serif; --mono:ui-monospace,Consolas,monospace; --r:12px; --rb:8px;
+  --ease:cubic-bezier(.2,.7,.2,1);
+}
+:root[data-theme="light"]{
+  --bg:#F2F1EA; --surface:rgba(255,255,255,.6); --surface2:rgba(255,255,255,.9); --line:rgba(60,70,50,.14); --hdr:rgba(242,241,234,.85);
+  --text:#1E241F; --muted:#5A645C; --accent:#4B6D12; --fill:#A9CB4F; --onfill:#1A2808; --good:#2E7D49; --bad:#B3433D; --warn:#946B0F;
+  --orb1:rgba(169,203,79,.3); --orb2:rgba(150,170,160,.3); --sh:0 1px 2px rgba(40,50,30,.06),0 14px 36px rgba(40,50,30,.09);
+}
+*,*::before,*::after{box-sizing:border-box}
+html{scroll-behavior:smooth;scroll-padding-top:84px}
+body{margin:0;background:var(--bg);color:var(--text);font:16px/1.65 var(--sans);-webkit-font-smoothing:antialiased;transition:background-color .35s,color .35s}
+body::before{content:"";position:fixed;inset:0;z-index:-1;pointer-events:none;background:radial-gradient(640px 440px at 88% 4%,var(--orb1),transparent 70%),radial-gradient(780px 540px at 2% 46%,var(--orb2),transparent 70%),url("data:image/svg+xml;utf8,<svg xmlns='http://www.w3.org/2000/svg' width='160' height='160'><filter id='n'><feTurbulence type='fractalNoise' baseFrequency='.85' numOctaves='2' stitchTiles='stitch'/><feColorMatrix values='0 0 0 0 .5 0 0 0 0 .5 0 0 0 0 .5 0 0 0 .06 0'/></filter><rect width='100%' height='100%' filter='url(%23n)'/></svg>")}
+a{color:inherit;text-decoration:none}
+:focus-visible{outline:2px solid var(--accent);outline-offset:3px;border-radius:6px}
+.wrap{max-width:1120px;margin:0 auto;padding:0 24px}
+main{overflow-x:clip}
+h1,h2,h3,h4{margin:0;font-weight:600}
+h2{font-size:clamp(28px,3.6vw,40px);line-height:1.15;letter-spacing:-.02em;margin-bottom:14px}
+h2::before{content:"";display:block;width:36px;height:4px;border-radius:2px;background:var(--fill);margin-bottom:18px}
+h3{font-size:18px}
+.sub{color:var(--muted);margin:0;max-width:560px;font-size:17px}
+.progress{position:fixed;top:0;left:0;height:3px;width:0;background:var(--fill);z-index:70;pointer-events:none}
+
+.btn{position:relative;overflow:hidden;display:inline-flex;align-items:center;justify-content:center;font:600 15px var(--sans);padding:14px 26px;border:1px solid var(--fill);border-radius:var(--rb);background:var(--fill);color:var(--onfill);cursor:pointer;transition:transform .2s var(--ease),filter .2s,border-color .2s,color .2s,background .2s}
+.btn::after{content:"";position:absolute;inset:0;background:linear-gradient(110deg,transparent 30%,rgba(255,255,255,.3) 50%,transparent 70%);transform:translateX(-120%);pointer-events:none}
+.btn:hover{transform:translateY(-2px)}.btn:hover::after{transform:translateX(120%);transition:transform .7s}
+.btn:active{transform:scale(.97)}
+.btn.ghost{background:var(--surface);color:var(--text);border-color:var(--line)}
+.btn.ghost::after{display:none}
+.btn.ghost:hover{border-color:var(--accent);color:var(--accent);background:var(--surface2)}
+.dot{width:9px;height:9px;border-radius:50%;background:var(--muted);flex:none}
+.on .dot{background:var(--good);animation:ping 2.2s infinite}.off .dot{background:var(--bad)}.unk .dot{background:var(--warn)}
+@keyframes ping{0%{box-shadow:0 0 0 0 rgba(127,203,143,.55)}70%,100%{box-shadow:0 0 0 9px rgba(127,203,143,0)}}
+
+body>header{position:sticky;top:0;z-index:40;background:var(--hdr);-webkit-backdrop-filter:blur(16px);backdrop-filter:blur(16px);border-bottom:1px solid var(--line);animation:down .6s var(--ease) both}
+@keyframes down{from{opacity:0;transform:translateY(-14px)}}
+.nav{display:flex;align-items:center;gap:12px;height:66px}
+.logo{display:flex;align-items:center;gap:10px;font-family:var(--px);font-size:13px;margin-right:auto}
+.logo b{color:var(--accent);font-weight:400}
+.logo svg{width:28px;height:28px;fill:var(--fill);shape-rendering:crispEdges;flex:none;transition:transform .3s var(--ease)}
+.logo:hover svg{transform:rotate(-8deg) scale(1.1)}
+nav{display:flex;gap:2px}
+nav a{position:relative;padding:8px 13px;font-size:14px;color:var(--muted);transition:color .2s}
+nav a::after{content:"";position:absolute;left:13px;right:13px;bottom:2px;height:2px;border-radius:1px;background:var(--accent);transform:scaleX(0);transition:transform .3s var(--ease)}
+nav a:hover{color:var(--text)}nav a.act{color:var(--text)}nav a:hover::after,nav a.act::after{transform:scaleX(1)}
+.pill{display:flex;align-items:center;gap:8px;font-size:13px;border:1px solid var(--line);padding:7px 13px;border-radius:var(--rb);background:var(--surface);color:var(--muted)}
+.ibtn{background:var(--surface);border:1px solid var(--line);color:var(--text);height:42px;min-width:42px;display:inline-flex;align-items:center;justify-content:center;padding:0 12px;border-radius:var(--rb);cursor:pointer;font:500 13px var(--sans);transition:border-color .2s,background .2s}
+.ibtn:hover{border-color:var(--accent);background:var(--surface2)}
+.ibtn .ti{display:inline-block;transition:transform .5s var(--ease)}.ibtn:hover .ti{transform:rotate(180deg)}
+.burger{display:none;width:42px;padding:0;font-size:18px}
+
+.hero{position:relative;padding:92px 24px 96px;display:grid;grid-template-columns:minmax(0,1.15fr) minmax(0,.85fr);gap:60px;align-items:center}
+.px{position:absolute;top:0;bottom:0;left:50%;width:100vw;transform:translateX(-50%);overflow:hidden;pointer-events:none;z-index:-1}
+.px i{position:absolute;bottom:-20px;background:var(--accent);border-radius:1px;opacity:0;animation:rise linear infinite}
+@keyframes rise{0%{transform:translateY(0) rotate(0);opacity:0}12%{opacity:.2}100%{transform:translateY(-620px) rotate(90deg);opacity:0}}
+@keyframes up{from{opacity:0;transform:translateY(20px)}}
+.hero>div:nth-child(2)>*{animation:up .8s var(--ease) both}
+.hero>div:nth-child(2)>:nth-child(2){animation-delay:.08s}.hero>div:nth-child(2)>:nth-child(3){animation-delay:.16s}.hero>div:nth-child(2)>:nth-child(4){animation-delay:.24s}
+.hero>div:nth-child(2)>:nth-child(5){animation-delay:.32s}.hero>div:nth-child(2)>:nth-child(6){animation-delay:.4s}.hero>div:nth-child(2)>:nth-child(7){animation-delay:.48s}
+.hero>.srv{animation:up .9s .25s var(--ease) both}
+.kicker{color:var(--accent);font-weight:500;font-size:14px;margin:0 0 20px}
+h1{font-weight:700;font-size:clamp(42px,6.4vw,76px);line-height:1.04;letter-spacing:-.035em;margin-bottom:24px}
+h1 span{color:var(--accent)}
+.lead{color:var(--muted);font-size:19px;max-width:520px;margin:0 0 32px}
+.ip{display:flex;align-items:stretch;overflow:hidden;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);cursor:pointer;transition:border-color .2s,background .2s,transform .2s var(--ease)}
+.ip:hover{border-color:var(--accent);background:var(--surface2)}.ip.copied{border-color:var(--good)}
+.ip small{display:flex;align-items:center;padding:0 16px;font-size:11px;color:var(--muted);border-right:1px solid var(--line);text-transform:uppercase;letter-spacing:.06em}
+.ip code{flex:1;min-width:0;padding:16px;font:600 19px var(--mono);color:var(--text);align-self:center;overflow-wrap:anywhere}
+.ip button{font:600 13px var(--sans);background:var(--fill);color:var(--onfill);border:0;padding:0 22px;cursor:pointer;min-width:104px;transition:filter .2s}
+.ip button:hover{filter:brightness(1.08)}
+.hero .ip{max-width:520px}
+.alt-ip{margin:12px 0 28px;font-size:14px;color:var(--muted)}
+.lnk{background:none;border:0;padding:0;color:var(--accent);font:600 14px var(--mono);cursor:pointer;text-decoration:underline;text-underline-offset:3px}
+.cta{display:flex;flex-wrap:wrap;gap:12px}
+.facts{margin:30px 0 0;font-size:13px;color:var(--muted)}
+
+.srv{border:1px solid var(--line);background:var(--surface);border-radius:16px;box-shadow:var(--sh);overflow:hidden;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.srv-top{display:flex;gap:18px;align-items:center;padding:22px}
+.srv-ic{width:64px;height:64px;flex:none;fill:var(--fill);shape-rendering:crispEdges;animation:float 3.2s ease-in-out infinite}
+@keyframes float{50%{transform:translateY(-4px)}}
+.srv-t{flex:1;min-width:0}
+.srv-name{display:flex;align-items:center;gap:12px;flex-wrap:wrap;font-weight:600;font-size:21px;line-height:1.2}
+.state{display:inline-flex;align-items:center;gap:7px;font:11px var(--px)}
+.on .state{color:var(--good)}.off .state{color:var(--bad)}.unk .state{color:var(--muted)}
+.srv-sub{margin-top:6px;font-size:14px;color:var(--muted);overflow-wrap:anywhere}
+.srv-cnt{text-align:right;font-family:var(--px);font-size:22px;line-height:1.2;white-space:nowrap}
+.srv-cnt em{display:block;margin-top:6px;font:400 12px var(--sans);color:var(--muted);font-style:normal}
+.bar{height:5px;background:var(--line)}
+.bar i{display:block;height:100%;width:0;background:var(--fill);border-radius:0 3px 3px 0;transition:width .8s var(--ease)}
+.srv-meta{display:grid;grid-template-columns:repeat(3,1fr);border-top:1px solid var(--line)}
+.srv-meta div{padding:16px 22px;min-width:0}.srv-meta div+div{border-left:1px solid var(--line)}
+.lbl{display:block;font-size:11px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.06em}
+.srv-meta b{font-weight:500;font-size:15px;overflow-wrap:anywhere}
+.names{display:flex;flex-wrap:wrap;gap:6px;padding:14px 22px;border-top:1px solid var(--line)}
+.names span{background:var(--surface2);border-radius:6px;padding:3px 10px;font-size:13px;overflow-wrap:anywhere}
+.hint{padding:12px 22px;border-top:1px solid var(--line);font-size:13px;color:var(--muted)}
+.srv-foot{padding:10px 22px;border-top:1px solid var(--line);display:flex;justify-content:flex-end}
+.srv-foot button{background:none;border:0;color:var(--muted);font:500 13px var(--sans);cursor:pointer;padding:6px 0;transition:color .2s}
+.srv-foot button:hover{color:var(--accent)}
+.srv.loading .state .dot{animation:pulse .9s ease-in-out infinite}
+.srv.stale .srv-top,.srv.stale .srv-meta{opacity:.55}
+@keyframes pulse{50%{opacity:.3}}
+
+section.blk{padding:100px 0}
+.sec{display:grid;grid-template-columns:minmax(220px,300px) minmax(0,1fr);gap:72px;align-items:start}
+.rows{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.ri{padding:26px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);transition:transform .3s var(--ease),border-color .3s,background .3s}
+.ri:hover{transform:translateY(-4px);border-color:var(--accent);background:var(--surface2)}
+.n{display:block;font:11px var(--px);color:var(--accent);margin-bottom:16px}
+.ri h3{margin-bottom:8px}
+.ri p{margin:0;color:var(--muted);font-size:15px}
+
+.rg{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1.15fr);gap:48px;align-items:start;margin-top:48px}
+.rl{display:grid;grid-template-columns:repeat(4,1fr);gap:6px}
+.rb{background:none;border:0;border-radius:var(--r);padding:16px 4px 12px;cursor:pointer;color:var(--text);font:500 14px var(--sans);display:flex;flex-direction:column;align-items:center;gap:10px;opacity:.55;transition:opacity .25s,background .25s}
+.rb:hover{opacity:.9;background:var(--surface)}
+.rb[aria-pressed="true"]{opacity:1;background:var(--surface);box-shadow:inset 0 -2px 0 var(--accent)}
+.avt{display:block;line-height:0}
+.av{display:block;image-rendering:pixelated;image-rendering:crisp-edges;transition:transform .3s var(--ease)}
+.rb .av{width:48px;height:48px}.rb:hover .av{transform:translateY(-4px) scale(1.06)}
+.rb[aria-pressed="true"] .av{animation:float 2.4s ease-in-out infinite}
+.rd{padding:30px;border:1px solid var(--line);border-radius:16px;background:var(--surface);box-shadow:var(--sh)}
+.rd-head{display:flex;align-items:center;gap:22px;margin-bottom:20px}
+.rd-head .av{width:80px;height:80px;animation:float 3s ease-in-out infinite}
+.rd h3{font-size:34px;line-height:1.1;letter-spacing:-.02em}
+.rstyle{margin-top:6px;font-size:13px;color:var(--muted);text-transform:uppercase;letter-spacing:.06em}
+.rdesc{margin:0 0 26px;color:var(--muted);font-size:17px;max-width:520px}
+.tr{display:grid;grid-template-columns:1fr 1fr;gap:28px;padding-top:24px;border-top:1px solid var(--line)}
+.trc h4{margin:0 0 14px;font-size:11px;font-weight:600;letter-spacing:.08em;text-transform:uppercase;color:var(--muted)}
+.trc ul{list-style:none;margin:0;padding:0;display:grid;gap:10px}
+.trc li{position:relative;padding-left:22px;font-size:15px}
+.trc li::before{position:absolute;left:0;top:0;font-weight:700}
+.pro li::before{content:"+";color:var(--accent)}.con li::before{content:"−";color:var(--bad)}
+.rd.swap>*{animation:up .45s var(--ease) both}
+.rd.swap>:nth-child(2){animation-delay:.05s}.rd.swap>:nth-child(3){animation-delay:.1s}
+
+.steps{list-style:none;margin:0 0 20px;padding:0;display:grid;gap:12px;counter-reset:s}
+.steps li{counter-increment:s;display:flex;align-items:center;gap:18px;padding:20px 22px;font-size:17px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);transition:transform .3s var(--ease),border-color .3s}
+.steps li:hover{transform:translateX(6px);border-color:var(--accent)}
+.steps li::before{content:counter(s);flex:none;width:34px;height:34px;display:flex;align-items:center;justify-content:center;border-radius:8px;background:var(--fill);color:var(--onfill);font:11px var(--px)}
+.steps code{font:600 16px var(--mono);color:var(--accent)}
+.tip{margin:16px 0 0;font-size:14px;color:var(--muted)}
+.sec-h .tip{margin-top:20px}
+
+.faq{display:grid;gap:10px}
+details{border:1px solid var(--line);border-radius:var(--r);background:var(--surface);transition:border-color .25s,background .25s}
+details:hover{border-color:var(--accent)}details[open]{border-color:var(--accent);background:var(--surface2)}
+summary{cursor:pointer;padding:20px 22px;font-weight:500;font-size:17px;list-style:none;display:flex;justify-content:space-between;gap:16px}
+summary::-webkit-details-marker{display:none}
+summary::after{content:"+";color:var(--accent);font-size:22px;line-height:1;transition:transform .3s var(--ease)}
+details[open] summary::after{transform:rotate(45deg)}
+details p{margin:0;padding:0 22px 20px;color:var(--muted);font-size:16px;max-width:620px;animation:up .35s var(--ease) both}
+details a{color:var(--accent)}
+
+.rules-doc{display:grid;grid-template-columns:220px minmax(0,1fr);gap:48px;align-items:start;margin-top:48px}
+.rtoc{position:sticky;top:100px;display:grid;border-left:1px solid var(--line)}
+.rtoc a{padding:10px 16px;margin-left:-1px;font-size:14px;color:var(--muted);border-left:2px solid transparent;transition:color .2s,border-color .2s,padding .25s var(--ease)}
+.rtoc a span{font:12px var(--mono);margin-right:10px;opacity:.7}
+.rtoc a:hover{color:var(--text)}.rtoc a.act{color:var(--text);border-left-color:var(--accent);padding-left:22px}
+.rbody{border:1px solid var(--line);border-radius:16px;background:var(--surface);padding:0 32px;box-shadow:var(--sh)}
+.rart{padding:30px 0;border-bottom:1px solid var(--line)}
+.rart header{display:flex;align-items:baseline;gap:14px;flex-wrap:wrap;margin-bottom:12px}
+.rart h3{font-size:20px}
+.rn{font:12px var(--mono);color:var(--accent)}
+.rs{margin-left:auto;font-size:12px;color:var(--muted);border:1px solid var(--line);border-radius:6px;padding:2px 10px}
+.clauses{list-style:none;margin:0;padding:0}
+.clauses li{display:grid;grid-template-columns:52px 1fr;padding:10px 0}
+.cn{font:13px var(--mono);color:var(--muted);padding-top:3px}
+.clauses p{margin:0;font-size:15.5px;line-height:1.7}
+.rfoot{padding:26px 0;display:flex;flex-wrap:wrap;gap:16px;align-items:center;justify-content:space-between;color:var(--muted);font-size:14px}
+
+.fin{display:grid;grid-template-columns:minmax(0,1fr) minmax(0,1fr);gap:56px;align-items:center;padding:56px;border:1px solid var(--line);border-radius:20px;background:var(--surface);box-shadow:var(--sh)}
+.fin .ip{margin-bottom:16px}
+footer{border-top:1px solid var(--line);padding:56px 0 28px;color:var(--muted);font-size:14px}
+.fgrid{display:grid;grid-template-columns:1.4fr 1fr 1fr 1.2fr;gap:32px;padding-bottom:36px}
+footer h3{font-size:11px;color:var(--text);margin-bottom:14px;text-transform:uppercase;letter-spacing:.08em;font-weight:600}
+.flinks{display:grid;gap:6px}
+.flinks a{padding:3px 0;transition:color .2s,transform .2s}.flinks a:hover{color:var(--accent);transform:translateX(3px)}
+.ft{background:var(--surface);border:1px solid var(--line);color:var(--accent);font:600 13px var(--mono);padding:10px 12px;border-radius:var(--rb);cursor:pointer;min-height:42px;text-align:left;width:100%;overflow-wrap:anywhere;transition:border-color .2s,background .2s}
+.ft:hover{border-color:var(--accent);background:var(--surface2)}
+.fcopy{border-top:1px solid var(--line);padding-top:20px;font-size:13px;display:flex;flex-wrap:wrap;justify-content:space-between;gap:8px 24px}
+
+.toast{position:fixed;left:50%;bottom:28px;transform:translate(-50%,16px);background:var(--fill);color:var(--onfill);font-weight:600;font-size:14px;padding:12px 22px;border-radius:var(--rb);box-shadow:var(--sh);opacity:0;pointer-events:none;transition:opacity .25s,transform .35s var(--ease);z-index:80}
+.toast.show{opacity:1;transform:translate(-50%,0)}.toast.err{background:var(--bad);color:#fff}
+
+.js-anim .rv{opacity:1}
+.js-anim .rv:not(.in){opacity:0}
+.js-anim .rv.in{animation:up .75s var(--d,0s) var(--ease) backwards}
+
+/* Chart */
+.chart-card{border:1px solid var(--line);background:var(--surface);border-radius:18px;box-shadow:var(--sh);overflow:hidden;-webkit-backdrop-filter:blur(14px);backdrop-filter:blur(14px)}
+.chart-nav{display:flex;align-items:center;gap:12px;padding:20px 26px;border-bottom:1px solid var(--line)}
+.cn-btn{width:42px;height:42px;flex:none;border-radius:var(--rb);border:1px solid var(--line);background:var(--surface2);color:var(--text);font:600 22px/1 var(--sans);cursor:pointer;transition:border-color .2s,color .2s,transform .2s var(--ease),opacity .2s}
+.cn-btn:hover:not(:disabled){border-color:var(--accent);color:var(--accent);transform:translateY(-1px)}
+.cn-btn:active:not(:disabled){transform:scale(.94)}
+.cn-btn:disabled{opacity:.35;cursor:not-allowed}
+.cn-mid{flex:1;min-width:0;text-align:center;line-height:1.3}
+.cn-mid b{display:block;font-size:24px;font-weight:600;text-transform:capitalize}
+.cn-mid span{font-size:13px;color:var(--muted)}
+.cn-today{flex:none;background:none;border:1px solid var(--line);border-radius:var(--rb);color:var(--muted);font:500 13px var(--sans);padding:10px 14px;cursor:pointer;transition:color .2s,border-color .2s}
+.cn-today:hover:not(:disabled){color:var(--accent);border-color:var(--accent)}
+.cn-today:disabled{opacity:.35;cursor:default}
+.chart-stats{display:grid;grid-template-columns:repeat(3,1fr);border-bottom:1px solid var(--line)}
+.chart-stats div{padding:22px 26px 20px;min-width:0}.chart-stats div+div{border-left:1px solid var(--line)}
+.chart-stats .lbl{display:block;font-size:12px;color:var(--muted);margin-bottom:4px;text-transform:uppercase;letter-spacing:.07em}
+.chart-stats b{font-weight:700;font-size:42px;line-height:1.1;letter-spacing:-.02em;font-variant-numeric:tabular-nums}
+.chart-stats small{margin-left:10px;font-size:14px;color:var(--muted)}
+.chart-area{position:relative;padding:22px 18px 8px;touch-action:pan-y;outline-offset:-3px;cursor:crosshair}
+#chartSvg{display:block;width:100%;height:230px;overflow:visible}
+#chartSvg .grid{stroke:var(--line);stroke-width:1;shape-rendering:crispEdges}
+#chartSvg .grid.base{opacity:1;stroke:var(--muted);stroke-opacity:.35}
+#chartSvg .vgrid{stroke-dasharray:2 5;opacity:.8}
+#chartSvg .ytx,#chartSvg .xtx{fill:var(--muted);font:500 13px var(--sans);font-variant-numeric:tabular-nums}
+#chartSvg .area{fill:url(#cg)}
+#chartSvg .line{fill:none;stroke:var(--accent);stroke-width:3.6;stroke-linejoin:round;stroke-linecap:round;filter:drop-shadow(0 6px 14px color-mix(in srgb,var(--accent) 55%,transparent))}
+#chartSvg .line.draw{stroke-dasharray:1;stroke-dashoffset:0;animation:draw 1.1s var(--ease)}
+#chartSvg .area.fade{animation:fadein 1s .15s var(--ease) backwards}
+@keyframes draw{from{stroke-dashoffset:1}}
+@keyframes fadein{from{opacity:0}}
+#chartSvg .lone{fill:var(--accent);stroke:var(--bg);stroke-width:3;filter:drop-shadow(0 0 10px color-mix(in srgb,var(--accent) 70%,transparent))}
+#chartSvg .peakhalo{fill:var(--accent);opacity:.18}#chartSvg .peakdot{fill:var(--accent);stroke:var(--bg);stroke-width:3}#chartSvg .col{fill:var(--fill);opacity:.12;transition:opacity .2s}#chartSvg .pdot{fill:var(--bg);stroke:var(--accent);stroke-width:2.4}
+#chartSvg .pk{fill:var(--accent);font:700 14px var(--sans);text-anchor:middle}
+#chartSvg .lastdot{fill:var(--accent);stroke:var(--bg);stroke-width:3}
+#chartSvg .live{fill:var(--accent);transform-box:fill-box;transform-origin:center;animation:livep 2.2s ease-out infinite}
+@keyframes livep{0%{transform:scale(.7);opacity:.5}100%{transform:scale(2.8);opacity:0}}
+#chartSvg .cur{stroke:var(--accent);stroke-width:1;stroke-dasharray:4 4;opacity:.65}
+#chartSvg .halo{fill:var(--accent);opacity:.2}
+#chartSvg .hdot{fill:var(--bg);stroke:var(--accent);stroke-width:3.2}
+.chart-tip{position:absolute;top:6px;z-index:2;pointer-events:none;background:var(--bg);border:1px solid var(--accent);border-radius:12px;padding:9px 16px;font-size:15px;white-space:nowrap;box-shadow:var(--sh);transform:translateX(-50%);font-variant-numeric:tabular-nums}
+.chart-tip b{color:var(--accent);font-weight:600}
+.chart-empty{position:absolute;inset:40px 18px 50px;display:flex;align-items:center;justify-content:center;color:var(--muted);font-size:15px;pointer-events:none}
+.chart-days{border-top:1px solid var(--line);padding:20px 26px 10px}
+.cd-t{font-size:11px;color:var(--muted);text-transform:uppercase;letter-spacing:.07em;margin-bottom:10px}
+.chart-strip{display:grid;grid-template-columns:repeat(14,minmax(0,1fr));gap:6px}
+.ds{display:flex;flex-direction:column;align-items:center;gap:4px;background:none;border:0;padding:4px 0 6px;border-radius:8px;cursor:pointer;color:var(--muted);font:500 11px var(--sans);transition:background .2s}
+.ds:hover{background:var(--surface)}
+.ds .bw{height:84px;width:100%;display:flex;align-items:flex-end;padding:0 14%}
+.ds .bar{display:block;width:100%;background:var(--fill);opacity:.3;border-radius:5px 5px 2px 2px;transition:opacity .2s}
+.ds:hover .bar{opacity:.6}.ds.act .bar{opacity:1}
+.ds.nodata .bar{height:3px!important;opacity:.14}
+.ds .wd{text-transform:uppercase;letter-spacing:.04em}
+.ds .dn{font-size:14px;color:var(--text);margin-top:-3px}
+.ds.act .dn{color:var(--accent);font-weight:600}
+.chart-note{margin:0;padding:10px 26px 20px;font-size:13px;color:var(--muted)}
+.chart-area.slide-l{animation:slideL .35s var(--ease)}.chart-area.slide-r{animation:slideR .35s var(--ease)}
+@keyframes slideL{from{opacity:0;transform:translateX(28px)}}@keyframes slideR{from{opacity:0;transform:translateX(-28px)}}
+@media(max-width:560px){.chart-nav{padding:14px 12px}.cn-mid b{font-size:19px}.cn-today{display:none}.chart-area{padding:16px 8px 4px}.chart-stats div{padding:14px 12px}.chart-stats b{font-size:26px}.chart-stats small{display:block;margin:2px 0 0}.chart-days{padding:12px 10px 4px}.chart-strip{gap:2px}.ds .wd{display:none}.ds .bw{height:56px;padding:0 12%}}
+@media(prefers-reduced-motion:reduce){html{scroll-behavior:auto}*,*::before,*::after{transition:none!important;animation:none!important}.js-anim .rv:not(.in){opacity:1}}
+
+@media(max-width:960px){
+  .hero,.sec,.rg,.rules-doc,.fin{grid-template-columns:1fr}.hero{padding:48px 24px 64px;gap:40px}
+  .sec{gap:32px}.rg{gap:28px;margin-top:32px}.rules-doc{gap:20px;margin-top:32px}.fin{gap:28px;padding:32px 24px}
+  .rtoc{position:static;display:flex;overflow-x:auto;border-left:0;border-bottom:1px solid var(--line);gap:4px}
+  .rtoc a{white-space:nowrap;border-left:0;border-bottom:2px solid transparent;margin:0}
+  .rtoc a.act{border-bottom-color:var(--accent);padding-left:16px}
+  .burger{display:inline-flex}
+  nav{display:none;position:absolute;top:66px;left:0;right:0;flex-direction:column;background:var(--bg);border-bottom:1px solid var(--line);padding:8px 24px}
+  nav.open{display:flex}nav a{padding:14px 0;border-bottom:1px solid var(--line)}nav a::after{display:none}nav a.act{color:var(--accent)}
+  .fgrid{grid-template-columns:1fr 1fr}section.blk{padding:68px 0}.rows{grid-template-columns:1fr}
+}
+@media(max-width:560px){
+  .tr{grid-template-columns:1fr}.fgrid{grid-template-columns:1fr}
+  .pill .t,.ibtn .tn{display:none}.ip code{font-size:16px;padding:14px}.ip button{padding:0 14px;min-width:0}
+  .srv-top{padding:18px;gap:14px}.srv-ic{width:48px;height:48px}.srv-meta{grid-template-columns:1fr 1fr}.srv-meta div:last-child{grid-column:1/-1;border-left:0;border-top:1px solid var(--line)}
+  .rs{margin-left:0}.clauses li{grid-template-columns:42px 1fr}.rbody{padding:0 18px}.cta .btn{flex:1 1 100%}
+  .rd{padding:22px}.rd-head .av{width:64px;height:64px}.rd h3{font-size:28px}.steps li{padding:16px}
+}
+@media(max-width:380px){.pill{display:none}.nav{gap:8px}.rl{grid-template-columns:repeat(2,1fr)}}
+
+.js:not([data-page="home"]) .page-home{display:none}
+.js:not([data-page="rules"]) .page-rules{display:none}
+.js:not([data-page="stats"]) .page-stats{display:none}
+h1{margin-bottom:12px}
+.tagline{font-size:clamp(22px,3vw,32px);font-weight:600;letter-spacing:-.01em;margin:0 0 22px}
+.hero>div:nth-child(2)>:nth-child(8){animation-delay:.56s}
+.band-wrap{margin-top:-24px;margin-bottom:8px}
+.band{display:grid;grid-template-columns:repeat(4,1fr);border:1px solid var(--line);border-radius:var(--r);background:var(--surface);box-shadow:var(--sh)}
+.band div{padding:26px 24px;border-right:1px solid var(--line);min-width:0}.band div:last-child{border-right:0}
+.band b{display:block;font:400 22px var(--px);color:var(--accent);margin-bottom:10px;line-height:1.2}
+.band span{font-size:14px;color:var(--muted)}
+a.ri{display:block}
+.steps li span b{display:block;font-weight:500;font-size:17px}
+.steps li span em{display:block;font-style:normal;font-size:14px;color:var(--muted);margin-top:3px}
+.tip .btn{margin-top:4px}
+.page-head{padding:64px 24px 8px}
+.back{display:inline-block;color:var(--muted);font-size:14px;margin-bottom:24px;transition:color .2s,transform .2s}
+.back:hover{color:var(--accent);transform:translateX(-3px)}
+.ph1{font-size:clamp(36px,5.4vw,60px);font-weight:700;line-height:1.05;letter-spacing:-.03em;margin:0 0 18px}
+.page-head .lead{max-width:640px;margin:0}
+.page-body{padding-top:48px}
+.h2s{font-size:22px;margin:0 0 20px}.h2s::before{display:none}
+.sum{display:grid;grid-template-columns:repeat(auto-fit,minmax(200px,1fr));gap:12px;margin-bottom:64px}
+.sum div{padding:20px;border:1px solid var(--line);border-radius:var(--r);background:var(--surface);font-size:15px}
+.sum b{display:block;font:400 11px var(--px);color:var(--accent);margin-bottom:12px}
+.page-body .rules-doc{margin-top:0}
+@media(max-width:960px){.band{grid-template-columns:1fr 1fr}.band div:nth-child(2){border-right:0}.band div:nth-child(-n+2){border-bottom:1px solid var(--line)}.page-head{padding-top:40px}.sum{margin-bottom:44px}}
+@media(max-width:560px){.band b{font-size:18px}.band div{padding:20px 16px}}
+
+/* ===== фиксы вёрстки ===== */
+[hidden]{display:none!important}
+.rtoc a::after,.flinks a::after{display:none}
+.flinks{position:static;padding:0;border:0;background:none;flex-direction:column}
+.flinks a{border:0}
+body{padding-left:env(safe-area-inset-left);padding-right:env(safe-area-inset-right)}
+::selection{background:var(--fill);color:var(--onfill)}
+html{scrollbar-color:var(--line) transparent}
+
+/* ===== улучшенный дизайн ===== */
+.hero::before{content:"";position:absolute;inset:0 -40px;z-index:-1;pointer-events:none;opacity:.5;
+  background-image:linear-gradient(var(--line) 1px,transparent 1px),linear-gradient(90deg,var(--line) 1px,transparent 1px);background-size:44px 44px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 70% at 50% 40%,#000 20%,transparent 75%);mask-image:radial-gradient(ellipse 70% 70% at 50% 40%,#000 20%,transparent 75%)}
+.kicker{display:inline-flex;align-items:center;gap:8px;padding:6px 14px;border:1px solid var(--line);border-radius:99px;background:var(--surface);font-size:13px}
+.kicker::before{content:"";width:7px;height:7px;border-radius:2px;background:var(--fill)}
+h1 span{background:linear-gradient(120deg,var(--accent),color-mix(in srgb,var(--accent) 55%,#5FD0B5));-webkit-background-clip:text;background-clip:text;color:transparent}
+h2::before{width:44px;height:5px;background:linear-gradient(90deg,var(--fill),transparent)}
+.btn:not(.ghost){box-shadow:0 8px 24px -8px color-mix(in srgb,var(--fill) 70%,transparent)}
+.btn:not(.ghost):hover{box-shadow:0 12px 30px -8px color-mix(in srgb,var(--fill) 85%,transparent)}
+.ip{box-shadow:var(--sh)}
+.ip code{letter-spacing:.01em}
+.srv,.rd,.chart-card,.rbody,.fin{border-color:color-mix(in srgb,var(--line) 60%,var(--accent) 12%)}
+.srv{position:relative}
+.srv::before{content:"";position:absolute;inset:0 0 auto;height:1px;background:linear-gradient(90deg,transparent,var(--accent),transparent);opacity:.6}
+.band{overflow:hidden}
+.band div{transition:background .3s}.band div:hover{background:var(--surface2)}
+.ri{position:relative;overflow:hidden}
+.ri::after{content:"";position:absolute;inset:auto 0 0;height:2px;background:var(--fill);transform:scaleX(0);transform-origin:left;transition:transform .4s var(--ease)}
+.ri:hover::after{transform:scaleX(1)}
+.ri:hover{box-shadow:var(--sh)}
+.n{display:inline-flex;align-items:center;justify-content:center;width:38px;height:38px;border-radius:9px;background:color-mix(in srgb,var(--fill) 16%,transparent);margin-bottom:18px}
+.rb{--rc:var(--accent);border:1px solid transparent}
+.rb:hover{border-color:var(--line)}
+.rb[aria-pressed="true"]{border-color:var(--rc);box-shadow:0 0 0 1px var(--rc),0 10px 26px -10px var(--rc)}
+.rd{--rc:var(--accent);position:relative;overflow:hidden}
+.rd::before{content:"";position:absolute;inset:0 0 auto;height:4px;background:var(--rc)}
+.rd::after{content:"";position:absolute;right:-60px;top:-60px;width:220px;height:220px;border-radius:50%;background:var(--rc);opacity:.12;filter:blur(40px);pointer-events:none}
+.rd-head .av{filter:drop-shadow(0 6px 14px var(--rc))}
+.rstyle{color:var(--rc)}
+.steps li::before{box-shadow:0 6px 16px -6px var(--fill)}
+details[open] summary{color:var(--accent)}
+.rbody{padding:0 36px}
+.rart:last-of-type{border-bottom:0}
+.rs{background:var(--surface2)}
+footer{background:linear-gradient(transparent,var(--surface))}
+.totop{position:fixed;right:20px;bottom:24px;z-index:60;width:46px;height:46px;border-radius:var(--rb);border:1px solid var(--line);background:var(--hdr);-webkit-backdrop-filter:blur(12px);backdrop-filter:blur(12px);color:var(--text);font-size:20px;cursor:pointer;opacity:0;transform:translateY(12px);pointer-events:none;transition:opacity .25s,transform .3s var(--ease),border-color .2s}
+.totop.show{opacity:1;transform:none;pointer-events:auto}.totop:hover{border-color:var(--accent);color:var(--accent)}
+@media(max-width:560px){.rbody{padding:0 18px}.totop{right:14px;bottom:16px}}
+
+/* ===== спокойный минимализм: убираем неон ===== */
+:root[data-theme="dark"]{--orb1:rgba(166,209,60,.04);--orb2:rgba(80,120,108,.07)}
+:root[data-theme="light"]{--orb1:rgba(169,203,79,.14);--orb2:rgba(150,170,160,.14)}
+.px{opacity:.35}
+.hero::before{display:none}
+h1 span{background:none;color:var(--accent)}
+h2::before{width:32px;height:3px;background:var(--fill)}
+.btn:not(.ghost),.btn:not(.ghost):hover{box-shadow:none}
+.btn::after{display:none}
+.ip{box-shadow:none}
+.srv::before,.ri::after,.rd::after{display:none}
+.ri:hover{box-shadow:none;transform:translateY(-2px)}
+.n{background:none;width:auto;height:auto;margin-bottom:14px}
+.rb[aria-pressed="true"]{box-shadow:none;background:var(--surface2)}
+.rd-head .av{filter:none}
+.steps li::before{box-shadow:none}
+.srv,.rd,.chart-card,.rbody,.fin{border-color:var(--line);box-shadow:none}
+.totop{box-shadow:none}
+
+/* ===== компактный график ===== */
+.chart-card{border-radius:14px;-webkit-backdrop-filter:none;backdrop-filter:none}
+.chart-nav{padding:12px 16px;gap:8px}
+.cn-btn{width:34px;height:34px;font-size:18px}
+.cn-mid b{font-size:17px}.cn-mid span{font-size:12px}
+.cn-today{padding:7px 12px;font-size:12px}
+.chart-stats{grid-template-columns:repeat(4,1fr)}
+.chart-stats div{padding:12px 16px}
+.chart-stats .lbl{font-size:10.5px;margin-bottom:2px}
+.chart-stats b{font-size:24px;font-weight:600}
+.chart-stats small{display:block;margin:0;font-size:12px}
+.chart-area{padding:12px 10px 0}
+#chartSvg .line{stroke-width:2;filter:none}
+#chartSvg .col,#chartSvg .peakhalo,#chartSvg .halo,#chartSvg .live{display:none}
+#chartSvg .lone,#chartSvg .lastdot,#chartSvg .peakdot{filter:none;stroke-width:2}
+#chartSvg .grid{stroke-opacity:.7}
+#chartSvg .vgrid{opacity:.5}
+#chartSvg .ytx,#chartSvg .xtx{font-size:11px}
+#chartSvg .pk{font-size:12px}
+.chart-tip{padding:5px 10px;font-size:13px;border-radius:8px;box-shadow:none;border-color:var(--line)}
+.chart-days{padding:12px 16px 4px}
+.cd-t{margin-bottom:6px;font-size:10.5px}
+.chart-strip{gap:4px}
+.ds .bw{height:40px}
+.ds .wd{font-size:10px}.ds .dn{font-size:12px}
+.chart-note{padding:6px 16px 14px;font-size:12px}
+@media(max-width:560px){.chart-stats{grid-template-columns:1fr 1fr}.chart-stats div:nth-child(3){border-left:0}.chart-stats div:nth-child(n+3){border-top:1px solid var(--line)}.chart-stats b{font-size:20px}.ds .bw{height:32px}}
+
+.pen{display:block;margin-top:8px;padding-left:10px;border-left:2px solid var(--fill);font-size:12.5px;line-height:1.45;color:var(--muted)}
+.clauses li p strong{color:var(--text)}
+.tz{display:grid;grid-template-columns:repeat(3,1fr) auto;gap:0;align-items:center;border:1px solid var(--line);border-radius:14px;background:var(--surface);text-decoration:none;color:inherit;overflow:hidden;transition:border-color .2s}
+.tz:hover{border-color:var(--accent)}
+.tz>div{padding:18px 22px;border-right:1px solid var(--line)}
+.tz b{display:block;font-size:30px;font-weight:600;line-height:1.1;margin-top:4px}
+.tz .btn{margin:0 20px}
+.lbl{font-size:11px;letter-spacing:.06em;text-transform:uppercase;color:var(--muted)}
+.kpis{display:grid;grid-template-columns:repeat(6,1fr);gap:10px;margin-bottom:14px}
+.kpi{border:1px solid var(--line);border-radius:12px;background:var(--surface);padding:14px 16px}
+.kpi b{display:block;font-size:26px;font-weight:600;margin:3px 0 1px}
+.kpi small{color:var(--muted);font-size:12px}
+.page-stats .chart-card{margin-bottom:14px}
+.sx-grid{display:grid;grid-template-columns:1fr 1fr;gap:14px}
+.sx-card{border:1px solid var(--line);border-radius:14px;background:var(--surface);padding:20px 22px;min-width:0}
+.sx-wide{grid-column:1/-1}
+.sx-card h3{font-size:17px;margin:0 0 2px}
+.sx-s{color:var(--muted);font-size:13px;margin:0 0 14px}
+.heat{display:grid;grid-template-columns:34px repeat(24,1fr);gap:3px;overflow-x:auto;min-width:0}
+.heat .hl,.heat .hx{font-size:11px;color:var(--muted);display:flex;align-items:center}
+.heat .hx{justify-content:flex-start;height:14px}
+.hc{aspect-ratio:1;min-width:14px;border-radius:3px;background:color-mix(in srgb,var(--fill) calc(var(--v)*100%),var(--surface2))}
+.hbars{display:grid;grid-template-columns:repeat(24,1fr);gap:3px;height:150px;align-items:end}
+.hb{display:flex;flex-direction:column;justify-content:flex-end;height:100%;align-items:center;gap:4px}
+.hb i{display:block;width:100%;background:var(--fill);border-radius:3px 3px 0 0;min-height:2px;opacity:.85}
+.hb span{font-size:10px;color:var(--muted);height:12px}
+.wb,.dr{display:grid;grid-template-columns:70px 1fr 56px;align-items:center;gap:10px;padding:5px 0;font-size:13px}
+.dr{grid-template-columns:96px 1fr 64px 64px}
+.wb>div,.dr>div{height:8px;border-radius:99px;background:var(--surface2);overflow:hidden}
+.wb i,.dr i{display:block;height:100%;background:var(--fill);border-radius:99px}
+.wb b,.dr b{font-weight:600}.dr em{font-style:normal;color:var(--muted);text-align:right}
+.sx-note{color:var(--muted);font-size:13px;margin:14px 2px 0}
+@media(max-width:960px){.kpis{grid-template-columns:repeat(3,1fr)}.sx-grid{grid-template-columns:1fr}.tz{grid-template-columns:1fr 1fr 1fr}.tz .btn{grid-column:1/-1;margin:14px 20px}}
+@media(max-width:560px){.kpis{grid-template-columns:1fr 1fr}.tz b{font-size:24px}.tz>div{padding:14px}.dr{grid-template-columns:80px 1fr 56px}.dr em{display:none}}
+</style>
+</head>
+<body>
+<svg width="0" height="0" style="position:absolute" aria-hidden="true"><symbol id="rc" viewBox="0 0 10 10"><path d="M4 0h2v3H4zM1 1h2v2H1zM7 1h2v2H7zM1 2h8v1H1zM2 3h2v1H2zM6 3h2v1H6zM0 4h3v2H0zM4 4h2v2H4zM7 4h3v2H7zM2 6h2v1H2zM6 6h2v1H6zM1 7h8v1H1zM1 7h2v2H1zM7 7h2v2H7zM4 7h2v3H4z"/></symbol></svg>
+<div class="progress" id="progress" aria-hidden="true"></div>
+
+<header>
+  <div class="wrap nav">
+    <a class="logo" href="#top" aria-label="RadCore, наверх"><svg aria-hidden="true"><use href="#rc"/></svg>Rad<b>Core</b></a>
+    <nav id="menu" aria-label="Навигация">
+      <a href="#status">Статус</a><a href="#/stats">Статистика</a><a href="#about">О сервере</a><a href="#races">Расы</a><a href="#join">Как зайти</a><a href="#faq">FAQ</a><a href="#/rules">Правила</a>
+    </nav>
+    <div class="pill" id="hpill"><span class="dot"></span><span class="t" id="hcount">—</span></div>
+    <button class="ibtn" id="theme" type="button" aria-label="Сменить тему"><span class="ti">◐</span><span class="tn" id="tname">&nbsp;Светлая</span></button>
+    <button class="ibtn burger" id="burger" type="button" aria-label="Меню" aria-expanded="false" aria-controls="menu">☰</button>
+  </div>
+</header>
+
+<main class="page-home" id="top">
+  <section class="wrap hero" id="status">
+    <div class="px" id="px" aria-hidden="true"></div>
+    <div>
+      <p class="kicker">Minecraft · Survival · RPG</p>
+      <h1>Rad<span>Core</span></h1>
+      <p class="tagline">Выживание с расами</p>
+      <p class="lead">RadCore — SMP-сервер Minecraft без приватов, где у каждого игрока своя раса. Восемь рас, один общий мир и RPG-механики: выбирай стиль игры, исследуй, торгуй и договаривайся с другими игроками.</p>
+      <div class="ip" title="Нажмите, чтобы скопировать"><small>IP</small><code>rc.trick-game.net</code><button type="button" data-ip="rc.trick-game.net">Копировать</button></div>
+      <p class="alt-ip">Альтернативный адрес: <button class="lnk" type="button" data-ip="radcore.trick-game.net">radcore.trick-game.net</button></p>
+      <div class="cta">
+        <a class="btn" href="#join">Как подключиться</a>
+        <a class="btn ghost" href="#races">Смотреть расы</a>
+        <a class="btn ghost" href="https://t.me/radcorenews" target="_blank" rel="noopener noreferrer">Telegram</a>
+      </div>
+      <p class="facts">1.20.5 – 1.21.11+ · 8 рас · Без приватов · RPG-механики · Можно без лицензии</p>
+    </div>
+
+    <div class="srv" id="panel">
+      <div class="srv-top">
+        <svg class="srv-ic" viewBox="0 0 10 10" aria-hidden="true"><use href="#rc"/></svg>
+        <div class="srv-t">
+          <div class="srv-name">RadCore <span class="state" role="status" aria-live="polite"><span class="dot"></span><span id="st">…</span></span></div>
+          <div class="srv-sub" id="stsub">Проверяем…</div>
+          <div class="srv-sub" id="motd"></div>
+        </div>
+        <div class="srv-cnt"><span id="pl">—</span><em id="plmax"></em></div>
+      </div>
+      <div class="bar"><i id="plbar"></i></div>
+      <div class="srv-meta">
+        <div><span class="lbl">Версия</span><b id="ver">—</b></div>
+        <div><span class="lbl">Обновлено</span><b id="upd">—</b></div>
+        <div><span class="lbl">Проверка</span><b id="lasttry">—</b></div>
+      </div>
+      <div class="names" id="names" hidden></div>
+      <div class="hint" id="hint" hidden></div>
+      <div class="srv-foot"><button type="button" id="refresh" aria-label="Обновить статус сервера">Обновить статус</button></div>
+    </div>
+  </section>
+
+  <div class="wrap band-wrap"><div class="band">
+    <div><b>8</b><span>рас на выбор</span></div>
+    <div><b>SMP</b><span>один общий мир</span></div>
+    <div><b>RPG</b><span>механики рас</span></div>
+    <div><b>Java</b><span>версии 1.20.5 – 1.21.11+</span></div>
+  </div></div>
+
+  <section class="blk" id="activity">
+    <div class="wrap sec">
+      <div class="sec-h"><h2>Статистика онлайна</h2><p class="sub">График по дням, самые активные часы, карта загрузки по дням недели и рекорды сервера — на отдельной странице.</p></div>
+      <a class="tz" href="#/stats">
+        <div><span class="lbl">Сейчас онлайн</span><b id="tzNow">—</b></div>
+        <div><span class="lbl">Пик сегодня</span><b id="tzPeak">—</b></div>
+        <div><span class="lbl">Рекорд</span><b id="tzRec">—</b></div>
+        <span class="btn">Открыть статистику →</span>
+      </a>
+    </div>
+  </section>
+
+  <section class="blk" id="about">
+    <div class="wrap sec">
+      <div class="sec-h"><h2>Почему RadCore</h2><p class="sub">Не очередной анархический сервер. Здесь раса меняет то, как ты живёшь, копаешь, сражаешься и исследуешь мир.</p></div>
+      <div class="rows">
+        <div class="ri"><span class="n">01</span><h3>8 уникальных рас</h3><p>Эльф, вампир, атлант, орк, гном, фея, демон и человек. У каждой расы свои сильные и слабые стороны, а выбор определяет, как ты будешь играть.</p></div>
+        <div class="ri"><span class="n">02</span><h3>Один общий мир</h3><p>Без приватов и отдельных миров. Строй, торгуй и конфликтуй в одном SMP-пространстве, договаривайся с соседями и защищай своё сам.</p></div>
+        <div class="ri"><span class="n">03</span><h3>RPG-механика</h3><p>Способности, слабости, action bar, кастомные предметы и баланс, который регулярно обновляется.</p></div>
+        <div class="ri"><span class="n">04</span><h3>Активные обновления</h3><p>Новые механики рас, исправления и события. Все новости публикуются в Telegram-канале сервера.</p></div>
+        <div class="ri"><span class="n">05</span><h3>Честная экономика</h3><p>Выживание и крафт в центре. Раса даёт стиль игры, а не мгновенный имба-старт.</p></div>
+        <div class="ri"><span class="n">06</span><h3>Сообщество</h3><p>Небольшой сервер, где тебя слышат. Жалобы, идеи и вопросы можно отправить в поддержку.</p></div>
+        </div>
+    </div>
+  </section>
+
+  <section class="blk" id="races">
+    <div class="wrap">
+      <h2>Расы</h2>
+      <p class="sub">В RadCore восемь рас. У каждой свои сильные и слабые стороны, свой стиль игры и собственные механики. Выбор расы делается один раз, поэтому изучи особенности до входа в игру.</p>
+      <div class="rg">
+        <div class="rl" id="rl" role="group" aria-label="Список рас"></div>
+        <div class="rd" id="rd" aria-live="polite"></div>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk" id="join">
+    <div class="wrap sec">
+      <div class="sec-h"><h2>Как зайти</h2><p class="sub">Лицензия не обязательна. Поддерживаются версии 1.20.5 – 1.21.11+.</p>
+        <p class="tip">Не заходит? Проверь версию клиента, VPN и статус сервера наверху страницы. Напиши в поддержку, указав ник и приложив скриншот.</p></div>
+      <div>
+        <ol class="steps">
+          <li><span><b>Запусти Minecraft Java Edition</b><em>Подойдёт версия от 1.20.5 до 1.21.11 и новее.</em></span></li>
+          <li><span><b>Открой «Мультиплеер» → «Добавить сервер»</b><em>Нажми «Добавить сервер» в списке серверов.</em></span></li>
+          <li><span><b>Введи адрес <code>rc.trick-game.net</code></b><em>Можно использовать и запасной адрес radcore.trick-game.net.</em></span></li>
+          <li><span><b>Зайди, зарегистрируйся и выбери расу</b><em>Выбор расы делается один раз, поэтому заранее изучи особенности.</em></span></li>
+          </ol>
+        <div class="ip"><small>IP</small><code>rc.trick-game.net</code><button type="button" data-ip="rc.trick-game.net">Копировать</button></div>
+        <p class="tip">Альтернативный адрес: <button class="lnk" type="button" data-ip="radcore.trick-game.net">radcore.trick-game.net</button></p>
+      </div>
+    </div>
+  </section>
+
+  <section class="blk" id="tips">
+    <div class="wrap sec">
+      <div class="sec-h"><h2>Советы новичкам</h2><p class="sub">Четыре вещи, которые стоит знать до первого входа в мир.</p></div>
+      <div class="rows">
+        <div class="ri"><span class="n">01</span><h3>Изучи расы заранее</h3><p>Выбор расы делается один раз. Сравни сильные и слабые стороны в разделе «Расы», прежде чем заходить в игру.</p></div>
+        <div class="ri"><span class="n">02</span><h3>Помни: приватов нет</h3><p>Территорию никто не защищает за тебя. Договаривайся с игроками, строй укрытия и не оставляй ценное без присмотра.</p></div>
+        <div class="ri"><span class="n">03</span><h3>Прочитай правила</h3><p>За читы, дюпы и баги выдаётся бан. Полный свод правил собран на отдельной странице.</p></div>
+        <div class="ri"><span class="n">04</span><h3>Следи за новостями</h3><p>Обновления механик, исправления и события публикуются в Telegram-канале @radcorenews.</p></div>
+        </div>
+    </div>
+  </section>
+
+  <section class="blk" id="rules-summary">
+    <div class="wrap sec">
+      <div class="sec-h"><h2>Правила сервера</h2><p class="sub">Главное — здесь. Полный свод правил, наказания и порядок подачи жалоб собраны на отдельной странице.</p>
+        <p class="tip"><a class="btn" href="#/rules">Открыть правила</a></p></div>
+      <div class="rows">
+        <a class="ri" href="#/rules/r2"><span class="n">01</span><h3>Читы и эксплойты</h3><p>Санкция: бан. X-Ray, fly, kill-aura, дюпы и багоюз запрещены.</p></a>
+        <a class="ri" href="#/rules/r3"><span class="n">02</span><h3>Поведение в мире</h3><p>Войны и рейды допустимы, но не уничтожение имущества новичков без причины.</p></a>
+        <a class="ri" href="#/rules/r4"><span class="n">03</span><h3>Общение</h3><p>Оскорбления, токсичность, мошенничество и реклама — мут или бан.</p></a>
+        <a class="ri" href="#/rules/r5"><span class="n">04</span><h3>Механики рас</h3><p>Не обходи механики рас ошибками, о багах сообщай в поддержку.</p></a>
+        <a class="ri" href="#/rules/r6"><span class="n">05</span><h3>Аккаунт</h3><p>Аккаунт только свой. Обход блокировки усиливает наказание.</p></a>
+        <a class="ri" href="#/rules/r7"><span class="n">06</span><h3>Наказания</h3><p>Предупреждение, мут или бан в зависимости от тяжести нарушения.</p></a>
+        </div>
+    </div>
+  </section>
+
+  <section class="blk" id="faq">
+    <div class="wrap sec">
+      <div class="sec-h"><h2>Частые вопросы</h2><p class="sub">Если не нашёл ответ — напиши в Telegram.</p></div>
+      <div class="faq">
+        <details><summary>Нужна ли лицензия?</summary><p>Нет, на сервер можно зайти и без лицензии.</p></details>
+        <details><summary>Какая версия поддерживается?</summary><p>1.20.5 – 1.21.11+. Рекомендуем последнюю стабильную Paper-совместимую версию.</p></details>
+        <details><summary>Нужно ли регистрироваться?</summary><p>Да, при первом входе нужно зарегистрироваться, после чего выбирается раса.</p></details>
+        <details><summary>Можно ли сменить расу?</summary><p>Обычно выбор делается один раз. Смена возможна через особые предметы или администратора, если они появятся на сервере.</p></details>
+        <details><summary>Есть ли приваты?</summary><p>Нет. Это классический SMP: строй, договаривайся и защищайся.</p></details>
+        <details><summary>Можно ли играть с телефона (Bedrock)?</summary><p>Ориентир сервера — Java. Geyser может работать нестабильно, гарантий нет.</p></details>
+        <details><summary>Где читать новости?</summary><p>В Telegram-канале <a href="https://t.me/radcorenews" target="_blank" rel="noopener noreferrer">@radcorenews</a>.</p></details>
+        <details><summary>Как связаться с поддержкой?</summary><p>Напишите в <a href="https://t.me/radcorenews?direct" target="_blank" rel="noopener noreferrer">поддержку в Telegram</a> и укажите свой ник. Для жалобы приложите скриншот или видео.</p></details>
+        <details><summary>Где посмотреть правила?</summary><p>На <a href="#/rules">отдельной странице правил</a>.</p></details>
+        </div>
+    </div>
+  </section>
+
+  <section class="blk">
+    <div class="wrap fin">
+      <div><h2>Готов войти в мир?</h2><p class="sub">Скопируй IP, зарегистрируйся и выбирай расу осознанно.</p></div>
+      <div>
+        <div class="ip"><small>IP</small><code>rc.trick-game.net</code><button type="button" data-ip="rc.trick-game.net">Копировать</button></div>
+        <div class="cta"><a class="btn ghost" href="https://t.me/radcorenews" target="_blank" rel="noopener noreferrer">Telegram-канал</a><a class="btn ghost" href="https://t.me/radcorenews?direct" target="_blank" rel="noopener noreferrer">Поддержка</a></div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<main class="page-stats" id="stats-top">
+  <section class="wrap page-head">
+    <a class="back" href="#top">← На главную</a>
+    <h1 class="ph1">Статистика онлайна</h1>
+    <p class="lead">Подробная картина активности RadCore: график по дням, рекорды, самые людные часы и карта загрузки по дням недели.</p>
+  </section>
+  <section class="blk"><div class="wrap">
+    <div class="kpis" id="kpis"></div>
+    <div class="chart-card" id="chartCard">
+        <div class="chart-nav">
+          <button type="button" class="cn-btn" id="dPrev" aria-label="Предыдущий день">‹</button>
+          <div class="cn-mid"><b id="dLabel">Сегодня</b><span id="dDate"></span></div>
+          <button type="button" class="cn-btn" id="dNext" aria-label="Следующий день">›</button>
+          <button type="button" class="cn-today" id="dToday">Сегодня</button>
+        </div>
+        <div class="chart-stats">
+          <div><span class="lbl">Пик</span><b id="cPeak">—</b><small id="cPeakT"></small></div>
+          <div><span class="lbl">Среднее</span><b id="cAvg">—</b><small id="cAvgT"></small></div>
+          <div><span class="lbl">Минимум</span><b id="cMin">—</b><small id="cMinT"></small></div>
+          <div><span class="lbl">Сейчас / в точке</span><b id="cCur">—</b><small id="cCurT"></small></div>
+        </div>
+        <div class="chart-area" id="chartArea" tabindex="0" role="img" aria-label="График количества игроков за выбранный день">
+          <svg id="chartSvg" viewBox="0 0 720 280" aria-hidden="true"></svg>
+          <div class="chart-tip" id="chartTip" hidden></div>
+          <div class="chart-empty" id="chartEmpty" hidden>Нет данных за этот день</div>
+        </div>
+        <div class="chart-days"><div class="cd-t">Пик онлайна · последние 14 дней</div><div class="chart-strip" id="dStrip"></div></div>
+        <p class="chart-note" id="chartNote"></p>
+      </div>
+    <div class="sx-grid">
+      <div class="sx-card sx-wide"><h3>Карта загрузки</h3><p class="sx-s">Средний онлайн по дням недели и часам. Чем темнее клетка, тем больше игроков.</p><div class="heat" id="heat"></div></div>
+      <div class="sx-card"><h3>Типичный день</h3><p class="sx-s">Средний онлайн по часам суток.</p><div class="hbars" id="hbars"></div></div>
+      <div class="sx-card"><h3>По дням недели</h3><p class="sx-s">Средний онлайн за день.</p><div class="wbars" id="wbars"></div></div>
+      <div class="sx-card sx-wide"><h3>Последние 7 дней</h3><p class="sx-s">Пик и среднее значение за каждые сутки.</p><div class="dtab" id="dtab"></div></div>
+    </div>
+    <p class="sx-note" id="sxNote"></p>
+  </div></section>
+</main>
+<main class="page-rules" id="rules-top">
+  <section class="wrap page-head">
+    <a class="back" href="#top">← На главную</a>
+    <h1 class="ph1">Правила сервера</h1>
+    <p class="lead">Свод правил RadCore. Он помогает сохранить честную игру и комфортную атмосферу для всех. Перед первым входом в мир прочитайте его полностью.</p>
+    <p class="tip">Редакция от 14 ноября 2026 · 13 разделов · 108 пунктов</p>
+  </section>
+  <section class="blk page-body">
+    <div class="wrap">
+      <h2 class="h2s">Коротко</h2>
+      <div class="sum"><div><b>Читы</b>Читы, дюпы и баги — бан.</div><div><b>Уважение</b>Без оскорблений, угроз и спама.</div><div><b>Реклама</b>Чужие проекты не рекламируем.</div><div><b>Аккаунт</b>Аккаунт только свой.</div><div><b>Ошибки</b>Нашёл ошибку — сообщи в поддержку.</div></div>
+      <h2 class="h2s">Полный текст правил</h2>
+      <div class="rules-doc">
+        <nav class="rtoc" id="rtoc" aria-label="Разделы правил"><a href="#/rules/r1"><span>01</span>Общие положения</a><a href="#/rules/r2"><span>02</span>Читы и эксплойты</a><a href="#/rules/r3"><span>03</span>Поведение в игровом мире</a><a href="#/rules/r4"><span>04</span>Общение</a><a href="#/rules/r5"><span>05</span>Механики рас</a><a href="#/rules/r6"><span>06</span>Аккаунт</a><a href="#/rules/r7"><span>07</span>Наказания и порядок их применения</a><a href="#/rules/r8"><span>08</span>Торговля и сделки</a><a href="#/rules/r9"><span>09</span>Постройки и нагрузка на сервер</a><a href="#/rules/r10"><span>10</span>Жалобы на нарушения</a><a href="#/rules/r11"><span>11</span>Апелляции</a><a href="#/rules/r12"><span>12</span>Роли и полномочия</a><a href="#/rules/r13"><span>13</span>Заключительные положения</a></nav>
+        <div class="rbody">
+        <article class="rart" id="r1" aria-labelledby="r1h"><header><span class="rn">01</span><h3 id="r1h">Общие положения</h3></header><ol class="clauses"><li><span class="cn">1.1</span><p>Правила обязательны для всех игроков RadCore независимо от игрового стажа, расы, ранга и должности.</p></li><li><span class="cn">1.2</span><p>Подключаясь к серверу, игрок подтверждает, что ознакомился с правилами и обязуется их соблюдать. Незнание правил не освобождает от ответственности.</p></li><li><span class="cn">1.3</span><p>Правила действуют в игровом мире, чате, личных сообщениях, голосовых каналах и официальных ресурсах RadCore.</p></li><li><span class="cn">1.4</span><p>Новая редакция правил вступает в силу после публикации на официальной странице или в Telegram-канале @radcorenews.</p></li><li><span class="cn">1.5</span><p>Если ситуация прямо не описана в правилах, администрация рассматривает её по фактам, последствиям и принципам честной игры. Наказание должно быть обоснованным и соразмерным нарушению.</p></li><li><span class="cn">1.6</span><p>Игрок обязан выполнять законные и относящиеся к работе сервера требования персонала: прекратить нарушение, предоставить объяснение или следовать процедуре проверки.</p></li><li><span class="cn">1.7</span><p>Донат, ранг, должность, стаж и помощь проекту не дают иммунитета от наказаний.</p></li><li><span class="cn">1.8</span><p>Нарушение другого игрока не оправдывает ответное нарушение. Если игрок считает действия другого участника неправомерными, он должен подать жалобу.</p></li></ol></article>
+<article class="rart" id="r2" aria-labelledby="r2h"><header><span class="rn">02</span><h3 id="r2h">Читы и эксплойты</h3></header><ol class="clauses"><li><span class="cn">2.1</span><p>Запрещено использовать сторонние программы, модификации, скрипты и макросы, дающие игровое преимущество: X-Ray, fly, speed, kill-aura, reach, автокликеры, no-fall, ESP, freecam для разведки, боты и автоматизацию действий.<span class="pen">Возможное наказание: бан или перманентный бан</span></p></li><li><span class="cn">2.2</span><p>Запрещено дублировать предметы, ресурсы и валюту любым способом, а также использовать способы получения предметов или ресурсов из ничего.<span class="pen">Возможное наказание: бан или перманентный бан, изъятие полученного</span></p></li><li><span class="cn">2.3</span><p>Запрещено использовать ошибки игры, плагинов и механик рас ради преимущества, включая ошибки телепортации, урона, крафта, зелий, торговли и перемещения предметов.<span class="pen">Возможное наказание: временный бан, бан или перманентный бан</span></p></li><li><span class="cn">2.4</span><p>Разрешены модификации, не дающие игрового преимущества: миникарта только с отображением рельефа, счётчик FPS, оптимизация графики, шейдеры, косметические ресурспаки без прозрачности блоков, увеличение изображения (zoom), координаты и перевод интерфейса.</p></li><li><span class="cn">2.5</span><p>Если игрок не уверен, разрешена ли модификация, он должен уточнить это в поддержке до её использования.</p></li><li><span class="cn">2.6</span><p>При обоснованном подозрении на использование запрещённых модификаций персонал вправе запросить проверку в пределах утверждённой сервером процедуры. Отказ или уклонение учитываются при рассмотрении ситуации, но решение должно опираться на совокупность обстоятельств.<span class="pen">Возможное наказание при подтверждённом нарушении: временный бан или бан</span></p></li><li><span class="cn">2.7</span><p>Обнаружив уязвимость, игрок обязан прекратить её использование и сообщить о ней в поддержку. Использование уязвимости до сообщения рассматривается как нарушение.<span class="pen">Возможное наказание за использование уязвимости: бан</span></p></li><li><span class="cn">2.8</span><p>Предметы и ресурсы, полученные с помощью читов, дюпа или багов, могут быть изъяты; последствия нарушения могут быть отменены откатом.</p></li><li><span class="cn">2.9</span><p>Запрещено распространять читы, схемы дюпа и инструкции по использованию эксплойтов. Передача или продажа предметов, заведомо полученных запрещённым способом, считается участием в нарушении.<span class="pen">Возможное наказание: временный бан, бан или перманентный бан</span></p></li><li><span class="cn">2.10</span><p>Атаки на инфраструктуру сервера, включая DDoS и намеренное использование уязвимостей протокола, влекут перманентный бан.<span class="pen">Возможное наказание: перманентный бан</span></p></li></ol></article>
+<article class="rart" id="r3" aria-labelledby="r3h"><header><span class="rn">03</span><h3 id="r3h">Поведение в игровом мире</h3></header><ol class="clauses"><li><span class="cn">3.1</span><p>RadCore — SMP без приватов. Война, рейды, ловушки, засады, разграбление и борьба за ресурсы разрешены, если проводятся в рамках игровых механик.</p></li><li><span class="cn">3.2</span><p>Запрещено уничтожать имущество новичков без игровой причины. Новичком считается игрок с небольшим игровым временем; ориентир — первые 10 часов.<span class="pen">Возможное наказание: предупреждение или временный бан</span></p></li><li><span class="cn">3.3</span><p>Запрещён спавнкилл — убийство игрока сразу после возрождения, в зоне спавна или многократно подряд с целью не дать ему нормально играть.<span class="pen">Возможное наказание: бан</span></p></li><li><span class="cn">3.4</span><p>Запрещено лишать игрока возможности продолжать игру: замуровывать без выхода, помещать в ловушку без возможности выбраться игровыми средствами или блокировать возрождение.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">3.5</span><p>Запрещено массово разрушать постройки, убивать чужих животных и жителей или портить мир без игровой цели.<span class="pen">Возможное наказание: временный бан или бан, откат разрушений</span></p></li><li><span class="cn">3.6</span><p>Запрещено засорять мир массовым размещением бессмысленных лавок, табличек и конструкций.<span class="pen">Возможное наказание: предупреждение, временный бан или удаление конструкций</span></p></li><li><span class="cn">3.7</span><p>Запрещено использовать баги, подставные ники и иные способы обмана, которые нарушают игровые механики при убийстве, краже или рейде.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">3.8</span><p>Рейды и кражи разрешены только в рамках обычных игровых механик. Использование читов или багов регулируется разделом 2.</p></li><li><span class="cn">3.9</span><p>Споры между игроками решаются через поддержку. Самостоятельное нарушение правил в ответ на действия другого игрока не допускается.</p></li></ol></article>
+<article class="rart" id="r4" aria-labelledby="r4h"><header><span class="rn">04</span><h3 id="r4h">Общение</h3></header><ol class="clauses"><li><span class="cn">4.1</span><p>Запрещены оскорбления игроков, персонала и проекта, в том числе завуалированные, написанные транслитом, с заменой символов или на другом языке.<span class="pen">Возможное наказание: мут или временный бан</span></p></li><li><span class="cn">4.2</span><p>Запрещены реальные угрозы жизни, здоровью или имуществу, а также публикация личных данных другого человека без его согласия.<span class="pen">Возможное наказание: бан или перманентный бан</span></p></li><li><span class="cn">4.3</span><p>Запрещены дискриминация и разжигание ненависти по национальности, расе, полу, ориентации, религии, возрасту, состоянию здоровья и другим признакам, а также экстремистская и нацистская символика.<span class="pen">Возможное наказание: мут, бан или перманентный бан</span></p></li><li><span class="cn">4.4</span><p>Запрещены мошенничество, фишинговые ссылки, выманивание аккаунтов и предметов, а также обман с целью получить чужие данные или имущество.<span class="pen">Возможное наказание: бан или перманентный бан</span></p></li><li><span class="cn">4.5</span><p>Запрещены флуд, спам, злоупотребление капсом и многократная отправка одинаковых сообщений. Ориентир для повтора — более трёх одинаковых сообщений подряд.<span class="pen">Возможное наказание: предупреждение или мут</span></p></li><li><span class="cn">4.6</span><p>Реклама сторонних серверов, проектов, каналов и ссылок запрещена без разрешения администрации.<span class="pen">Возможное наказание: мут или временный бан</span></p></li><li><span class="cn">4.7</span><p>Ролевой конфликт не оправдывает реальную травлю, угрозы и оскорбления.<span class="pen">Возможное наказание: мут или бан</span></p></li><li><span class="cn">4.8</span><p>Запрещено намеренно провоцировать травлю и разжигать вражду между игроками или группами.<span class="pen">Возможное наказание: мут или временный бан</span></p></li><li><span class="cn">4.9</span><p>Запрещено выдавать себя за администратора, модератора или другого игрока.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">4.10</span><p>Запрещены материалы 18+, шок-контент и сексуализированные сообщения. Обсуждения политики и религии, переходящие в оскорбления или травлю, могут быть ограничены персоналом.<span class="pen">Возможное наказание: мут или бан</span></p></li><li><span class="cn">4.11</span><p>Запрещены подделка доказательств, заведомо ложные обвинения и ложные жалобы.<span class="pen">Возможное наказание: мут, временный бан или бан</span></p></li><li><span class="cn">4.12</span><p>Обсуждать спорные решения персонала следует через жалобу или апелляцию, а не посредством провокаций и флуда в общем чате.<span class="pen">Возможное наказание за флуд или провокации: предупреждение или мут</span></p></li><li><span class="cn">4.13</span><p>Запрещено обходить мут через второй аккаунт или передачу сообщений через других игроков.<span class="pen">Возможное наказание: временный бан или бан</span></p></li></ol></article>
+<article class="rart" id="r5" aria-labelledby="r5h"><header><span class="rn">05</span><h3 id="r5h">Механики рас</h3></header><ol class="clauses"><li><span class="cn">5.1</span><p>Раса выбирается при первом входе. Перед выбором игроку следует ознакомиться с её особенностями.</p></li><li><span class="cn">5.2</span><p>Запрещено обходить или отключать ограничения и особенности рас с помощью багов, запрещённых модификаций или ресурспаков.<span class="pen">Возможное наказание: бан</span></p></li><li><span class="cn">5.3</span><p>Слабости расы являются частью игрового баланса. Запрещено нейтрализовать их с помощью багов или иных запрещённых способов.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">5.4</span><p>Запрещено автоматизировать расовые способности макросами, автокликерами или ботами, если это даёт преимущество.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">5.5</span><p>Запрещено использовать расовые способности для намеренного создания лагов или чрезмерной нагрузки на сервер.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">5.6</span><p>Об ошибках в механиках рас необходимо сообщать в поддержку, указав расу, последовательность действий и приложив доказательства. Использовать найденную ошибку ради преимущества запрещено.<span class="pen">Возможное наказание за использование ошибки: бан</span></p></li><li><span class="cn">5.7</span><p>Смена расы возможна через предусмотренные сервером предметы или по решению администрации, если такая возможность существует.</p></li><li><span class="cn">5.8</span><p>Администрация может менять баланс, способности и характеристики рас. Существенные изменения публикуются в официальных ресурсах проекта.</p></li></ol></article>
+<article class="rart" id="r6" aria-labelledby="r6h"><header><span class="rn">06</span><h3 id="r6h">Аккаунт</h3></header><ol class="clauses"><li><span class="cn">6.1</span><p>Аккаунт предназначен для использования одним человеком. Запрещены его продажа, обмен, аренда и передача другому лицу.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">6.2</span><p>Игрок несёт ответственность за действия, совершённые с его аккаунта. Не передавайте пароль другим людям; администрация не должна запрашивать пароль.</p></li><li><span class="cn">6.3</span><p>Запрещено входить под чужим ником или создавать ник, намеренно имитирующий ник другого игрока либо сотрудника проекта.<span class="pen">Возможное наказание: предупреждение, временный бан или бан</span></p></li><li><span class="cn">6.4</span><p>Запрещено использовать дополнительные аккаунты для обхода ограничений, уклонения от наказания, шпионажа или получения нечестного преимущества.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">6.5</span><p>Ник не должен содержать оскорбления, рекламу или дискриминационные выражения. Администрация вправе потребовать сменить неподходящий ник.<span class="pen">Возможное наказание: требование сменить ник, временный бан при отказе</span></p></li><li><span class="cn">6.6</span><p>Обход блокировки с помощью другого аккаунта, прокси, VPN или иных средств приводит к усилению наказания, вплоть до блокировки связанных аккаунтов.<span class="pen">Возможное наказание: бан или перманентный бан</span></p></li><li><span class="cn">6.7</span><p>Использование VPN само по себе не запрещено, если оно не применяется для обхода блокировки или других ограничений.</p></li><li><span class="cn">6.8</span><p>При обоснованном подозрении на взлом администрация может временно ограничить доступ к аккаунту до выяснения обстоятельств.</p></li><li><span class="cn">6.9</span><p>Восстановление доступа проводится через поддержку после проверки принадлежности аккаунта.</p></li></ol></article>
+<article class="rart" id="r7" aria-labelledby="r7h"><header><span class="rn">07</span><h3 id="r7h">Наказания и порядок их применения</h3></header><ol class="clauses"><li><span class="cn">7.1</span><p>На сервере могут применяться предупреждение, мут, временный бан, перманентный бан, изъятие предметов, откат изменений и удаление построек, если они связаны с нарушением.</p></li><li><span class="cn">7.2</span><p>При выборе меры учитываются тяжесть нарушения, умысел, повторность, причинённый ущерб, доказательства и поведение игрока при разбирательстве.</p></li><li><span class="cn">7.3</span><p>За незначительные нарушения, например флуд, капс или лёгкую токсичность, может применяться предупреждение или мут от 15 минут до 24 часов.</p></li><li><span class="cn">7.4</span><p>За оскорбления, провокации, рекламу и обход мута может применяться мут от 1 часа до 7 суток; при повторных или грубых нарушениях — бан.</p></li><li><span class="cn">7.5</span><p>За мошенничество, реальные угрозы, дискриминацию, публикацию личных данных, передачу аккаунта и злоупотребление мультиаккаунтами может применяться бан от 7 суток до перманентного.</p></li><li><span class="cn">7.6</span><p>За читы, X-Ray, дюп и использование багов может применяться бан от 30 суток до перманентного, а также изъятие незаконно полученных предметов и ресурсов.</p></li><li><span class="cn">7.7</span><p>За обход блокировки и продажу аккаунтов или эксплойтов может применяться перманентный бан. Атаки на инфраструктуру регулируются пунктом 2.10.</p></li><li><span class="cn">7.8</span><p>Три предупреждения в течение 30 суток могут повлечь мут или бан. Повторные нарушения учитываются при выборе наказания.</p></li><li><span class="cn">7.9</span><p>При грубом нарушении администрация может назначить наказание без предварительного предупреждения.</p></li><li><span class="cn">7.10</span><p>Срок наказания начинается с момента его назначения. Выход игрока из игры не приостанавливает течение срока.</p></li><li><span class="cn">7.11</span><p>Наказание должно соответствовать установленным правилам и обстоятельствам дела. Причина наказания сообщается игроку, если это не мешает безопасности сервера или разбирательству.</p></li></ol></article>
+<article class="rart" id="r8" aria-labelledby="r8h"><header><span class="rn">08</span><h3 id="r8h">Торговля и сделки</h3></header><ol class="clauses"><li><span class="cn">8.1</span><p>Обмен и торговля между игроками проходят на их риск. Администрация не обязана возмещать потери от неосторожной сделки, если не было нарушения правил.</p></li><li><span class="cn">8.2</span><p>Подмена товара, получение оплаты без выполнения согласованных условий и намеренное введение второй стороны в заблуждение считаются мошенничеством.<span class="pen">Возможное наказание: бан, возврат или изъятие предметов при наличии доказательств</span></p></li><li><span class="cn">8.3</span><p>Запрещена продажа или покупка игровых ценностей, аккаунтов, рас и привилегий за реальные деньги вне официально разрешённых каналов проекта.<span class="pen">Возможное наказание: бан или перманентный бан</span></p></li><li><span class="cn">8.4</span><p>Запрещена торговля предметами, заведомо полученными с помощью дюпа, читов или багов. Покупка таких предметов при осознании их происхождения рассматривается как участие в нарушении.<span class="pen">Возможное наказание: бан и изъятие предметов</span></p></li><li><span class="cn">8.5</span><p>Запрещены вымогательство, шантаж и принуждение к передаче предметов под угрозой реальных последствий, жалоб или разглашения личных данных. Игровое давление в рамках разрешённой войны допустимо.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">8.6</span><p>При споре по сделке администрация учитывает доказательства договорённостей. Игрокам рекомендуется сохранять скриншоты условий обмена.</p></li></ol></article>
+<article class="rart" id="r9" aria-labelledby="r9h"><header><span class="rn">09</span><h3 id="r9h">Постройки и нагрузка на сервер</h3></header><ol class="clauses"><li><span class="cn">9.1</span><p>Запрещены постройки, надписи, таблички и рисунки с оскорбительным, дискриминационным, сексуальным или экстремистским содержанием.<span class="pen">Возможное наказание: удаление содержимого, временный бан или бан</span></p></li><li><span class="cn">9.2</span><p>Запрещены конструкции и фермы, создающие чрезмерную нагрузку на сервер, включая лаг-машины, чрезмерно быстрые редстоун-механизмы и массовое скопление сущностей.<span class="pen">Возможное наказание: отключение или удаление конструкции, временный бан или бан</span></p></li><li><span class="cn">9.3</span><p>Запрещено намеренно вызывать лаги массовым созданием сущностей, зацикленными механизмами или умышленными цепочками взрывов.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">9.4</span><p>Запрещено засорять мир большим количеством мусорных блоков, выброшенных предметов и бессмысленных конструкций.<span class="pen">Возможное наказание: удаление мусора, предупреждение или временный бан</span></p></li><li><span class="cn">9.5</span><p>Запрещено блокировать порталы, общие дороги и зону спавна таким образом, чтобы это существенно мешало другим игрокам.<span class="pen">Возможное наказание: предупреждение, временный бан или удаление препятствия</span></p></li><li><span class="cn">9.6</span><p>Запрещены AFK-схемы со сторонним программным обеспечением и обход анти-AFK систем. Обычные игровые AFK-фермы без ботов разрешены.<span class="pen">Возможное наказание: временный бан или бан</span></p></li><li><span class="cn">9.7</span><p>Конструкции, нарушающие эти правила или создающие чрезмерную нагрузку, могут быть отключены, ограничены или удалены. Если нарушение повлекло ущерб миру, может быть выполнен откат.</p></li></ol></article>
+<article class="rart" id="r10" aria-labelledby="r10h"><header><span class="rn">10</span><h3 id="r10h">Жалобы на нарушения</h3></header><ol class="clauses"><li><span class="cn">10.1</span><p>Жалобы на игроков принимаются через поддержку в Telegram. Публичное обвинение в игровом чате не заменяет жалобу.</p></li><li><span class="cn">10.2</span><p>В жалобе укажите свой ник, ник предполагаемого нарушителя, дату и время, место или координаты, описание ситуации и соответствующий пункт правил.</p></li><li><span class="cn">10.3</span><p>Приложите исходные доказательства: скриншот, видео или запись экрана. Для сообщений в чате должны быть видны участники переписки и контекст.</p></li><li><span class="cn">10.4</span><p>Монтаж, подделка доказательств и намеренное сокрытие важного контекста могут стать основанием для отказа в жалобе и наказания заявителя.<span class="pen">Возможное наказание за намеренную фальсификацию: мут, временный бан или бан</span></p></li><li><span class="cn">10.5</span><p>Жалобу рекомендуется подать в течение 7 суток после события. Более поздние обращения могут быть рассмотрены, если речь идёт о читах, дюпе или существенном ущербе.</p></li><li><span class="cn">10.6</span><p>Одна жалоба должна относиться к одной ситуации или связанному эпизоду. Повторная отправка без новых сведений не ускоряет рассмотрение.</p></li><li><span class="cn">10.7</span><p>Администрация может не раскрывать заявителю подробности наказания другого игрока.</p></li><li><span class="cn">10.8</span><p>Жалобы на действия модератора направляются администратору; жалобы на администратора — владельцу проекта @One_ione. Сотрудник, на которого подана жалоба, не должен единолично рассматривать её.</p></li></ol></article>
+<article class="rart" id="r11" aria-labelledby="r11h"><header><span class="rn">11</span><h3 id="r11h">Апелляции</h3></header><ol class="clauses"><li><span class="cn">11.1</span><p>Игрок вправе обжаловать выданное ему наказание, если считает его ошибочным или несоразмерным.</p></li><li><span class="cn">11.2</span><p>Апелляцию следует подать в течение 14 суток с момента назначения наказания.</p></li><li><span class="cn">11.3</span><p>Укажите ник, дату, вид наказания, причину несогласия и аргументы. Приложите доказательства, если они имеются.</p></li><li><span class="cn">11.4</span><p>Апелляция подаётся через поддержку, а не в общий игровой чат.</p></li><li><span class="cn">11.5</span><p>По одному наказанию рассматривается одна апелляция. Повторное обращение возможно при наличии новых существенных доказательств.</p></li><li><span class="cn">11.6</span><p>Оскорбления, угрозы и давление на рассматривающего апелляцию не помогают пересмотру и могут рассматриваться как отдельное нарушение.</p></li><li><span class="cn">11.7</span><p>Если ошибка персонала подтверждена, наказание отменяется или изменяется. Имущество восстанавливается, если это технически возможно.</p></li><li><span class="cn">11.8</span><p>Решение по апелляции должно учитывать представленные доказательства и обстоятельства нарушения.</p></li></ol></article>
+<article class="rart" id="r12" aria-labelledby="r12h"><header><span class="rn">12</span><h3 id="r12h">Роли и полномочия</h3></header><ol class="clauses"><li><span class="cn">12.1</span><p><strong>Игроки.</strong> Все игроки обязаны соблюдать правила, уважать других участников и сообщать о нарушениях через поддержку. Игрок вправе подать жалобу или апелляцию.</p></li><li><span class="cn">12.2</span><p><strong>Игроки с Plus-рангом.</strong> Plus является игровым рангом и предоставляет только те преимущества, которые указаны в описании привилегии. Он не даёт права проверять чужие аккаунты, требовать личные данные, выдавать наказания, отменять решения персонала или получать иммунитет от правил.</p></li><li><span class="cn">12.3</span><p><strong>Модераторы.</strong> Модераторы следят за соблюдением правил, рассматривают обращения в пределах выданных полномочий, собирают доказательства и применяют разрешённые меры. Они обязаны действовать нейтрально, учитывать контекст и сообщать причину наказания. Модератор не вправе требовать пароли, присваивать имущество или использовать должность в личных целях.</p></li><li><span class="cn">12.4</span><p><strong>Администраторы.</strong> Администраторы контролируют работу модераторов, рассматривают сложные и спорные ситуации, решают технические и организационные вопросы и применяют меры в пределах своих полномочий. Они обязаны рассматривать доказательства и не использовать должность для личной выгоды.</p></li><li><span class="cn">12.5</span><p><strong>Владелец проекта.</strong> Владелец определяет общую политику сервера, назначает и снимает представителей персонала, утверждает их полномочия и рассматривает жалобы на действия администрации.</p></li><li><span class="cn">12.6</span><p><strong></strong>Запрещено использовать ранг или должность для угроз, травли, шантажа, личной выгоды, помощи друзьям в обход правил, сокрытия нарушений или намеренного вреда игрокам.<span class="pen">Возможное наказание: снятие роли, предупреждение, временный бан или бан</span></p></li><li><span class="cn">12.7</span><p><strong>Правила применяются ко всем одинаково.</strong> При рассмотрении нарушения учитываются факты, доказательства, тяжесть и повторность, а не донат, должность, дружба или личное отношение.</p></li></ol></article>
+<article class="rart" id="r13" aria-labelledby="r13h"><header><span class="rn">13</span><h3 id="r13h">Заключительные положения</h3></header><ol class="clauses"><li><span class="cn">13.1</span><p>Актуальная редакция правил публикуется на официальной странице проекта и в Telegram-канале @radcorenews. Игрокам следует самостоятельно следить за обновлениями.</p></li><li><span class="cn">13.2</span><p>RadCore является частным игровым проектом. Администрация может ограничить доступ игроку при наличии обоснованной угрозы серверу или его участникам.</p></li><li><span class="cn">13.3</span><p>Если игрок не понимает, разрешено ли определённое действие, ему следует обратиться в поддержку до его совершения.</p></li><li><span class="cn">13.4</span><p>Проект не связан с Mojang AB и Microsoft.</p></li></ol></article>
+<div class="rfoot"><span>Заметили нарушение? Сообщите в поддержку, указав ник и приложив скриншот.</span><a class="btn" href="https://t.me/radcorenews?direct" target="_blank" rel="noopener noreferrer">Написать в поддержку</a></div>
+        </div>
+      </div>
+    </div>
+  </section>
+</main>
+
+<footer>
+  <div class="wrap fgrid">
+    <div>
+      <div class="logo" style="margin-bottom:14px"><svg aria-hidden="true"><use href="#rc"/></svg>Rad<b>Core</b></div>
+      <p style="margin:0;max-width:280px">Minecraft SMP RPG с расами. Выживание, исследование, PvP и уникальные механики.</p>
+    </div>
+    <div><h3>Навигация</h3><nav class="flinks" aria-label="Разделы сайта"><a href="#about">О сервере</a><a href="#races">Расы</a><a href="#join">Как зайти</a><a href="#faq">FAQ</a><a href="#/rules">Правила</a></nav></div>
+    <div><h3>Связь</h3><nav class="flinks" aria-label="Контакты"><a href="https://t.me/radcorenews" target="_blank" rel="noopener noreferrer">Telegram-канал</a><a href="https://t.me/radcorenews?direct" target="_blank" rel="noopener noreferrer">Поддержка</a><a href="https://t.me/One_ione" target="_blank" rel="noopener noreferrer">Владелец @One_ione</a></nav></div>
+    <div><h3>Адреса</h3><div style="display:grid;gap:8px"><button class="ft" type="button" data-ip="rc.trick-game.net">rc.trick-game.net</button><button class="ft" type="button" data-ip="radcore.trick-game.net">radcore.trick-game.net</button></div></div>
+  </div>
+  <div class="wrap fcopy"><span>© 2026 RadCore · Не связан с Mojang AB / Microsoft</span><span>Создатель: Creator / MrFish · Главный спонсор: Karlo / Карло</span></div>
+</footer>
+
+<button class="totop" id="totop" type="button" aria-label="Наверх">↑</button>
+<div class="toast" id="toast" role="status" aria-live="polite"></div>
+
+<script>
+var CONFIG={
+  host:'rc.trick-game.net',
+  api:'https://api.mcsrvstat.us/3/',
+  interval:15000,
+  timeout:8000,
+  history:'/api/history',      // необязательно: URL JSON вида {"2026-10-15":[[минута_суток,игроков],...]} с серверной историей
+  sampleMin:1      // шаг локальной записи, минут
+};
+
+/* Расы: t — сильные стороны, w — слабости, img — пиксельная иконка 16×16 */
+var RACES=[
+ {
+  "n": "Человек",
+  "c": "#C2AD85",
+  "s": "Универсал",
+  "d": "Базовый выбор без жёстких слабостей. Подходит тем, кто хочет классическое выживание.",
+  "t": [
+   "Стандартные 10 сердец",
+   "Нет расовых штрафов",
+   "Гибкий старт под любой стиль",
+   "Хорош новичкам"
+  ],
+  "w": [],
+  "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAAAvElEQVR4AcyQSw6EIBBEYY7hQdxq4sX1BN5EFiwgfMKkFmW6ZyIxcaPJSzUFXdh8zMPvhQHe+9bjd2I1gnOu5ZwNKaWcNTysj+NoMkQFhBBMjPHkat0NQNMwDBYqkd5lQErJAByASqSHmqgR+Pv7vjfWVOmxGaoC8FB3QCNRAXhlyTiOFkgPNZuhKgC3y7m3bWvrujZ63EcjUQHTNNlaqyG4jTUU63meLZuhKgDGsiy2B85I/gLk5p36ccAXAAD//zrDnvAAAAAGSURBVAMA8T8cMGch1fAAAAAASUVORK5CYII="
+ },
+ {
+  "n": "Вампир",
+  "c": "#C25468",
+  "s": "Ночь · кровь",
+  "d": "Силён ночью. Вампиризм копит удары и лечит — вплоть до золотых сердец.",
+  "t": [
+   "Больше HP ночью",
+   "Вампиризм и золотые сердца",
+   "Скорость ночью"
+  ],
+  "w": [
+   "Горит на солнце",
+   "Слаб к кресту / святыням"
+  ],
+  "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABYklEQVR4AcxQzWrCQBCe8dQUEQUt1YuPUAoSexN8HF/BoxdvgqiPI3rstRdLPXnwJ4ogySZrinE6k2pwWwoFL4Z8zMw3M99+uym48rtBAa016SAg7fvfUIq0wPNIuy79vLFxBRmkwwEgisCIzJ3rYLs1RAwBWUQejiOLGJF5ZC7FuHRhCoQhWLkcWtksEufAOEerUMC7fB6PzP0pEHkeqOk0tnhfLGLkunBkziqVUJbUZEJHpSRNYDgIFgtQjPV4TM5oRMFyCWo+B2c4pBVDap/rZJsTQ0A7DnxuNvBQq2GmUonjY72OGdsGieF6Hfd5L/kNgZBP9NnBR7dLVjod25ZJyd87HdLSX62ESmAIaDmBXexPQ2/NJlG5HL+JuAvYncRkmxND4KnVwv1uB3t+PFmUnGfgtdGgkDmpn9vtxJn0DAEhqv0+2r0e4myGNucSq4MBvpwgM5f4JXDZ/E9+tcAXAAAA//9OKJHeAAAABklEQVQDAJSp5iEWpD9GAAAAAElFTkSuQmCC"
+ },
+ {
+  "n": "Эльф",
+  "c": "#6DBF78",
+  "s": "Лес · лук",
+  "d": "Меткий лучник леса. Присед, скрытность и точные выстрелы.",
+  "t": [
+   "Бонус в лесу",
+   "Лук: пронзание и аим",
+   "Невидимость с луком в приседе",
+   "Реген на листьях"
+  ],
+  "w": [
+   "Ночью меньше сердец"
+  ],
+  "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABbElEQVR4AbRPu07DQBCcCw8RyS2ChlRI1NT8AQUl9CAkSvrQAUpLRUMDSlLR8hFIIPENUaiA4EAcx459u+w6XMCJRRNheW53dmdGdyXM+P1PAA8aTGGDR7X+XRtcdNmpG6gJxshvsD1/i6PyPYTALO2Bo+ZUSC7A9m+YrAXZFEQJHlqPaKfPwhNQ2AQWd2GD61xILsAwAbAwbAHBy+op7uId4aM5h/VsL8f4LyWvF5z4lxk4jUFJhJK3b+a8A0PKh/EPT2Q/jOD06i0tLB8bG/hyNR9Jr5NVjY/a55z23mH7PrTXWRoo78Lp1Zs9YWmtalSgIGYMxCxFKYgILCRsnbE02UwP58kC3MB238AfHZDUcqVq0jgARSHKlRPDnx1Y2VnZObP6xgFKOA3gEDwdsrdeM95GzWjv5lpV65AL8Davxk9RgRoV2jtManIBKlJBPwxRBN2p5jemAnS5stU0RdDdJAoDJkV/8ZkDvgAAAP//BlVrpwAAAAZJREFUAwDMvwEwezmCEAAAAABJRU5ErkJggg=="
+ },
+ {
+  "n": "Орк",
+  "c": "#8FAE3D",
+  "s": "Сила · ближний бой",
+  "d": "Танк ближнего боя. Высокое HP, урон и сопротивление. Лук ему не по нраву.",
+  "t": [
+   "Очень много HP",
+   "Высокий урон в мили",
+   "Step-up и нокбек-резист",
+   "Удар при падении"
+  ],
+  "w": [
+   "Лук ломается при натяжении"
+  ],
+  "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABLUlEQVR4AaSQPU7DQBSEZ03gPBwgBaTgJwUFHRUSFQ1wFyiAE8AJQpI6dFBwH8Qy326e5ZgoAmHpy5udNx6v0uifT1swPFP+bVc3Wwq6BnoT8REy6FKAgDDRcDpqBOign1kpiNBfZilYPCmBksofgc69fwSPYnw0cC4FiL1z5e0daWA4vz5Th5IizA7I1o3UhEhbUvKp8RxdlIuoPvUq+/bYNQO/5EzdWYeIr8c8uFSevn9p+paFDj9mvOdvLmWSkpFhzh+UCo91ht9O1act2PLVgtk9MWl8pXxsiM7txZ6JB23By51f8tcx4TMv8uGudGTQeMDtJmQ5mLbAWpNbpeSS8bXyyc0Qq4DGk3dkirn8WSnA6wZmHxLgQ3fHGX4UYBJcB7s+awv6oU3nbwAAAP//Ig4WZwAAAAZJREFUAwClBmQhhaJAFgAAAABJRU5ErkJggg=="
+ },
+ {
+  "n": "Гном",
+  "c": "#C98F4C",
+  "s": "Шахты · руда",
+  "d": "Маленький, но быстрый в камне. Шахтёр и мастер кирки.",
+  "t": [
+   "Быстрое копание камня и руд",
+   "Маленький хитбокс",
+   "Каска со светом"
+  ],
+  "w": [
+   "Инструменты изнашиваются быстрее",
+   "Слабее в открытом бою"
+  ],
+  "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABAklEQVR4AbSPMWrDQBBFZ1OGNLlDDpADGHUOKVSKXCMnSJWDpEgXpDIQ4tbgI6hSbYwKgbCNbAxrnuGLXQsbg7HgMX//zHxGd3bld7sA/zf2IacOHVygJRZGn2sDdOjzFlHA5uvBb+czAxan/z8GaDxgRsvUKGC1WpqgGSKfGvp9ACc+Po1NTD/ubfTydgAtn8qsQvoA9zpxi+dvg9/du0FRFAZooAfMDgJkUNM0ddA0jQEa6B3TX0CDYSjL0gMeoIEe4IkooK5r+YYOUQNPmhoFtG1rVVUdQCdJ4gAd+iyKKID/7LrORJ7nHvSmMqNlahSAkWWZOwczIYOAsHmJvjpgDwAA///YLYXYAAAABklEQVQDAExh0iHR0po/AAAAAElFTkSuQmCC"
+ },
+ {
+  "n": "Атлант",
+  "c": "#4FA9BF",
+  "s": "Океан · плавание",
+  "d": "Хозяин воды. Под водой разгоняется, дышит и восстанавливается.",
+  "t": [
+   "Быстрое плавание + разгон",
+   "Много HP в воде",
+   "Дыхание и зрение под водой",
+   "Трезубец сильнее"
+  ],
+  "w": [
+   "На суше задыхается"
+  ],
+  "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABzklEQVR4AbRSPWsUURQ9d1JHtA1kNyBBS4Ww/gMxsdLKyl6sDGjwF4iC+gfUwspfILEJplI7kVhkLWTHxoBdss77mPduzn3Jht18kCJkmDv3nPPuufPuvKlwxuv8GtxaH2qJz3v5pI0e2cHS+n+99HqoFQRTIqgYU8Sm3eYaDl3VIY7sc5FyyMhBC7dsYopqaSImGiyubitaxY2rGd82BNpmhuLrBtC7Yjjj5kfWjLWYaOAbRXAJq4vTcr0bEch9k3BtrsWnpWmJ5LY+5keFp7+0BNUcE9buXhRCxJjRhoTEnPbHWrtzQVqOZuvFQ2+FZ/PFYEKzE9B7+1d777bU70S4YYCj1jAvvNnSBerGrbY0oXdvBAL4bQS+ybvMnOA5SuHUAncSfEI0zHWrHb24NJD7H1T+9eFCC8fC7w9mxPkWjTMemRN+PJyRxhmOsFrz2C4qA/r+nlikBCRVzL+qdXO5I5uPZiWpoM98+WWtKQkPSWC1FuatDFgnI/3lWQk8Os/z7jwfaOfFQCO54cjjjTnj9+OOWK15zFtGGBHL9cqc/Pn5BfVKl/8gFT4NF+1Jt3xwM3Kl3AcNCtt/jAoGNNQMk0ea4fE4tsF4wWl4FwAA//8POK60AAAABklEQVQDAJm7MTBfpeOvAAAAAElFTkSuQmCC"
+ },
+ {
+  "n": "Демон",
+  "c": "#DB6040",
+  "s": "Незер · огонь",
+  "d": "Создан для ада. Огонь и лава — дом, вода — враг.",
+  "t": [
+   "Иммунитет к огню и лаве",
+   "Огромное HP в Незере",
+   "Поджог при ударе",
+   "Ифрит-помощник"
+  ],
+  "w": [
+   "Вода и дождь сильно вредят"
+  ],
+  "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABXUlEQVR4AaSSzUrDQBSFzzRNU1HQV1P34kZwKfiz6UaxfQh34gP02RQUhErH891k0nShFBo4c8899zeTjLTn0zdYJOVdew1zo8GTlFc7l0vkPrqGgdFg7BMgzEfK4Nk24M16W7VbklslsiWXSkkKLFxUOIFKCh0OqrU0d8PkbfHlJ2ztc+xKbG07WysFd4fGMTDLSk3nT7CG69sN7n+UWIsmlQsIPKCZoN2Zm0YyPkOGGjHdrjYTQvARE7tJdtXUUjOWbpyLD7p5UMkxMeFl2l2WX6cyiKLVuc3BLxgVgp1W0vW30tSdXg+V2QDt7Uj5wLErx7DkFmw14OII8I6XX0oTT5844+JTcanEuCtsgcOFStz28liZqahsAII7c3miTEP8AsuFSucf8dnjH6ORF+h5ZPkO+pwQFF+mo605cxOQUutjARpo1c25tcFGlk7flYYYxob8zwbDpP/4LwAAAP//1dXSRAAAAAZJREFUAwDK2UwhPW975AAAAABJRU5ErkJggg=="
+ },
+ {
+  "n": "Фея",
+  "c": "#C98BDA",
+  "s": "Полёт · магия",
+  "d": "Крошечная и лёгкая. Полёт на магии, восстановление у цветов.",
+  "t": [
+   "Полёт за магию",
+   "Сбор пыльцы с цветов",
+   "Маленький размер"
+  ],
+  "w": [
+   "Мало HP и урона",
+   "Без магии падает"
+  ],
+  "img": "data:image/png;base64,iVBORw0KGgoAAAANSUhEUgAAABAAAAAQCAYAAAAf8/9hAAABNUlEQVR4AcxRO07DUBCcyR3oaDgBLYdAgoJwD5QSOkTF7yBQUNDACWg5AQ1VHIGTiGeUSFl21nrGoCdR0MTSvp3ZmR3/BvjntaYB9vxqpSq9bfcK1fW9ZQO3N1mqrPe9EaDBxtEus6F0d82yLq92xCOgP7CnF0OzRKlC8y0ta8chIkADkajJDNzZogrVHDbu8fE8LDryTgTkNAmYpGhxvCfwLQWMo/7GeScCJOaBVVOsLh7jg1o1g7j01fmDiQtnr3AE6HFUGqD+BKcJdnxnrBuI20mLg7tJXpXD9hsIdKnNAvaxhHnn6R4HZ/u01HJLC1nReZ3FE2jQJV4dkv5DScJGt2ajG3MIkhhcDl0B5NUO/IoA75EqQZhubOuAbR9GlyZPXhbvAkT6gnipfnt+BJQW/pp9AQAA//+gjRVgAAAABklEQVQDAMb91iHDU0jwAAAAAElFTkSuQmCC"
+ }
+];
+
+function $(i){return document.getElementById(i)}
+function el(t,c,x){var e=document.createElement(t);if(c)e.className=c;if(x!==undefined)e.textContent=x;return e}
+function fmt(d){return d.toLocaleTimeString('ru-RU',{hour:'2-digit',minute:'2-digit'})}
+
+var toastT;
+function toast(m,err){var t=$('toast');t.textContent=m;t.className='toast show'+(err?' err':'');clearTimeout(toastT);toastT=setTimeout(function(){t.className='toast'},2200)}
+function copyIP(t){
+  function ok(){toast('Скопировано: '+t)}
+  function bad(){toast('Не удалось скопировать',true)}
+  function fb(){var a=document.createElement('textarea');a.value=t;a.style.cssText='position:fixed;opacity:0';document.body.appendChild(a);a.select();
+    try{document.execCommand('copy')?ok():bad()}catch(e){bad()}a.remove()}
+  if(navigator.clipboard&&window.isSecureContext)navigator.clipboard.writeText(t).then(ok,fb);else fb()}
+function countTo(el,n){
+  var from=parseInt(el.textContent,10);if(isNaN(from))from=0;
+  if(from===n||(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches)){el.textContent=n;return}
+  var t0=null,d=600;function step(t){if(t0===null)t0=t;var k=Math.min(1,(t-t0)/d),e=1-Math.pow(1-k,3);
+    el.textContent=Math.round(from+(n-from)*e);if(k<1)requestAnimationFrame(step)}
+  requestAnimationFrame(step)}
+function markCopied(btn,box){
+  if(box){box.classList.add('copied');setTimeout(function(){box.classList.remove('copied')},1500)}
+  if(btn&&!btn.dataset.t){btn.dataset.t=btn.textContent;btn.textContent='Готово';setTimeout(function(){btn.textContent=btn.dataset.t;delete btn.dataset.t},1500)}}
+function initCopy(){
+  document.querySelectorAll('[data-ip]').forEach(function(b){b.addEventListener('click',function(e){e.stopPropagation();copyIP(b.dataset.ip);markCopied(b,b.closest('.ip'))})});
+  document.querySelectorAll('.ip').forEach(function(box){box.addEventListener('click',function(e){
+    if(e.target.closest('button'))return;var c=box.querySelector('code');if(c){copyIP(c.textContent.trim());markCopied(box.querySelector('button'),box)}})})}
+function initReveal(){
+  if(!('IntersectionObserver' in window)||(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches))return;
+  var els=[].slice.call(document.querySelectorAll('.sec-h,.ri,.steps li,.faq details,.rg>*,.rules-doc>*,.fin,.rfoot'));
+  els.forEach(function(e){e.classList.add('rv');var i=[].indexOf.call(e.parentNode.children,e);e.style.setProperty('--d',Math.min(i*0.07,0.35)+'s')});
+  document.documentElement.classList.add('js-anim');
+  var io=new IntersectionObserver(function(es){es.forEach(function(x){if(x.isIntersecting){x.target.classList.add('in');io.unobserve(x.target)}})},{threshold:.06,rootMargin:'0px 0px -6% 0px'});
+  els.forEach(function(e){io.observe(e)})}
+/* Роутер: главная и отдельная страница правил (#/rules, #/rules/r3) */
+function initRoute(){
+  var root=document.documentElement,rulesLink=document.querySelector('#menu a[href="#/rules"]');
+  function go(first){
+    var h=location.hash,isRules=/^#\/rules/.test(h),isStats=/^#\/stats/.test(h);
+    root.setAttribute('data-page',isRules?'rules':isStats?'stats':'home');
+    if(isStats){try{drawChart();renderStats()}catch(e){}}
+    document.title=isRules?'Правила сервера — RadCore':isStats?'Статистика онлайна — RadCore':HOME_TITLE;
+    document.querySelectorAll('#menu a').forEach(function(a){a.classList.remove('act')});
+    if(isStats){var sl=document.querySelector('#menu a[href="#/stats"]');if(sl)sl.classList.add('act');window.scrollTo({top:0,behavior:'auto'});return}
+    if(isRules){
+      if(rulesLink)rulesLink.classList.add('act');
+      window.scrollTo({top:0,behavior:'auto'});
+      var t=h.split('/')[2];
+      if(t)setTimeout(function(){var el=$(t);if(el)el.scrollIntoView({behavior:'smooth',block:'start'})},80);
+    }else{
+      var id=h.slice(1);
+      if(id)setTimeout(function(){var el=$(id);if(el)el.scrollIntoView({behavior:first?'auto':'smooth',block:'start'})},40);
+      else if(!first)window.scrollTo({top:0,behavior:'auto'});
+    }
+  }
+  window.addEventListener('hashchange',function(){go(false)});
+  go(true)}
+function initParticles(){
+  var box=$('px');if(!box||(window.matchMedia&&window.matchMedia('(prefers-reduced-motion: reduce)').matches))return;
+  var s=7;function n(){s=(s*1664525+1013904223)%4294967296;return s/4294967296}
+  for(var i=0;i<14;i++){var e=document.createElement('i'),z=6+Math.floor(n()*8);
+    e.style.cssText='left:'+(n()*100).toFixed(1)+'%;width:'+z+'px;height:'+z+'px;animation-duration:'+(12+n()*14).toFixed(1)+'s;animation-delay:-'+(n()*20).toFixed(1)+'s';box.appendChild(e)}}
+
+function applyTheme(t){document.documentElement.dataset.theme=t;$('tname').textContent=t==='dark'?'Светлая':'Тёмная';
+  var m=document.querySelector('meta[name="theme-color"]');if(m)m.content=t==='dark'?'#0D110F':'#F2F1EA'}
+function initTheme(){applyTheme(document.documentElement.dataset.theme==='light'?'light':'dark');
+  $('theme').addEventListener('click',function(){var t=document.documentElement.dataset.theme==='dark'?'light':'dark';applyTheme(t);try{localStorage.setItem('rc-theme',t)}catch(e){}})}
+
+/* Status */
+var HOME_TITLE=document.title;
+var lastOk=null,busy=false,lastTry=0;
+function getJSON(u){var c=new AbortController(),t=setTimeout(function(){c.abort()},CONFIG.timeout);
+  return fetch(u,{signal:c.signal,cache:'no-store'}).then(function(r){clearTimeout(t);if(!r.ok)throw new Error('http');return r.json()},function(e){clearTimeout(t);throw e})}
+function setState(st,label,sub){var p=$('panel'),h=$('hpill');
+  ['on','off','unk'].forEach(function(c){p.classList.toggle(c,c===st);h.classList.toggle(c,c===st)});
+  $('st').textContent=label;$('stsub').textContent=sub||''}
+function hint(m){var h=$('hint');h.hidden=!m;h.textContent=m||''}
+function showPlayers(list,online){var n=$('names');n.textContent='';
+  if(!Array.isArray(list)||!list.length){n.hidden=true;return}
+  list.slice(0,16).forEach(function(p){if(p&&p.name)n.appendChild(el('span','',p.name))});n.hidden=false}
+function render(d){
+  var pl=d.players&&typeof d.players.online==='number'?d.players:null;
+  if(d.online){
+    setState('on','ONLINE','Сервер работает');
+    if(pl)countTo($('pl'),pl.online);else $('pl').textContent='—';$('plmax').textContent=pl&&pl.max?'из '+pl.max:'';
+    $('plbar').style.width=(pl&&pl.max?Math.min(100,pl.online/pl.max*100):0)+'%';
+    $('hcount').textContent=pl?pl.online+(pl.max?'/'+pl.max:''):'—';
+    $('ver').textContent=(typeof d.version==='string'&&d.version)||'—';
+    $('motd').textContent=(d.motd&&Array.isArray(d.motd.clean)&&d.motd.clean.join(' ').trim())||'';
+    showPlayers(d.players&&d.players.list,pl?pl.online:0);
+  }else{
+    setState('off','OFFLINE','Не отвечает');
+    $('pl').textContent='0';$('plmax').textContent='';$('plbar').style.width='0';$('hcount').textContent='0';
+    $('ver').textContent='—';$('motd').textContent='';showPlayers()}
+}
+function fail(){
+  var msg=navigator.onLine===false?'Нет интернета.':'Сервис статуса недоступен — сервер при этом может работать.';
+  if(lastOk&&Date.now()-lastOk.getTime()<CONFIG.interval*8){
+    $('panel').classList.add('stale');hint(msg+' Данные от '+fmt(lastOk));
+  }else{
+    lastOk=null;setState('unk','UNKNOWN','Статус неизвестен');
+    $('pl').textContent='—';$('plmax').textContent='';$('plbar').style.width='0';$('hcount').textContent='—';
+    $('ver').textContent='—';$('motd').textContent='';showPlayers();hint(msg)}
+}
+function updateStatus(manual){
+  if(busy){if(manual)toast('Уже проверяем');return}
+  busy=true;var now=new Date();lastTry=now.getTime();$('lasttry').textContent=fmt(now);
+  $('panel').classList.add('loading');$('refresh').setAttribute('aria-busy','true');
+  getJSON(CONFIG.api+encodeURIComponent(CONFIG.host)).then(function(d){
+    if(!d||typeof d.online!=='boolean')throw new Error('bad');
+    lastOk=new Date();render(d);histRecord(d.online&&d.players&&typeof d.players.online==='number'?d.players.online:0);hint('');$('panel').classList.remove('stale');$('upd').textContent=fmt(lastOk);
+  }).catch(fail).then(function(){busy=false;$('panel').classList.remove('loading');$('refresh').removeAttribute('aria-busy');
+    if(lastOk)$('upd').textContent=fmt(lastOk)})}
+function initStatus(){
+  $('refresh').addEventListener('click',function(){if(!busy&&Date.now()-lastTry<2000){toast('Подождите…');return}updateStatus(true)});
+  updateStatus();
+  setInterval(function(){if(!document.hidden&&Date.now()-lastTry>=CONFIG.interval)updateStatus()},3000);
+  document.addEventListener('visibilitychange',function(){if(!document.hidden&&Date.now()-lastTry>=CONFIG.interval)updateStatus()});
+}
+
+
+/* Activity chart: история онлайна по дням */
+var HIST={},histDay=0,HKEY='rc-hist',HDAYS=30,STRIP=14,W=720,H=230,PL=34,PR=10,PT=26,PB=26;
+function dkey(d){var m=d.getMonth()+1,x=d.getDate();return d.getFullYear()+'-'+(m<10?'0':'')+m+'-'+(x<10?'0':'')+x}
+function dayAt(off){var d=new Date();d.setHours(12,0,0,0);d.setDate(d.getDate()-off);return d}
+function histLoad(){try{var r=JSON.parse(localStorage.getItem(HKEY)||'{}');if(r&&typeof r==='object')HIST=r}catch(e){HIST={}}}
+function histSave(){try{var ks=Object.keys(HIST).sort();while(ks.length>HDAYS)delete HIST[ks.shift()];localStorage.setItem(HKEY,JSON.stringify(HIST))}catch(e){}}
+function histRecord(n){var now=new Date(),k=dkey(now),min=now.getHours()*60+now.getMinutes();
+  var a=HIST[k]||(HIST[k]=[]),b=Math.floor(min/CONFIG.sampleMin)*CONFIG.sampleMin;
+  if(a.length&&a[a.length-1][0]===b)a[a.length-1][1]=Math.max(a[a.length-1][1],n);else a.push([b,n]);
+  histSave();if(histDay===0)drawChart()}
+function histRemote(){if(!CONFIG.history)return;
+  getJSON(CONFIG.history).then(function(d){if(d&&Array.isArray(d.samples)){var m={};d.samples.forEach(function(x){var q=new Date(x[0]*1000),k=dkey(q);(m[k]=m[k]||[]).push([q.getHours()*60+q.getMinutes(),x[1]])});Object.keys(m).forEach(function(k){HIST[k]=m[k]});histSave();drawChart();try{renderStats();updateTeaser()}catch(e){}return}if(!d||typeof d!=='object')return;
+    Object.keys(d).forEach(function(k){if(Array.isArray(d[k]))HIST[k]=d[k]});drawChart()}).catch(function(){})}
+function niceMax(v){var s=[4,8,12,20,40,60,100,200,400,600,1000];for(var i=0;i<s.length;i++)if(v<=s[i])return s[i];return Math.ceil(v/400)*400}
+function sv(t,at){var e=document.createElementNS('http://www.w3.org/2000/svg',t);for(var k in at)e.setAttribute(k,at[k]);return e}
+var CH={pts:[],max:4,key:'',animKey:'',sig:''};
+function xOf(m){return PL+(m/1440)*(W-PL-PR)}
+function yOf(v){return PT+(1-v/CH.max)*(H-PT-PB)}
+function fmtM(m){var h=Math.floor(m/60),n=m%60;return(h<10?'0':'')+h+':'+(n<10?'0':'')+n}
+/* монотонная кубическая кривая (без «перелётов» выше/ниже данных) */
+function smooth(P){
+  var n=P.length,d='M'+P[0][0].toFixed(1)+' '+P[0][1].toFixed(1);if(n<2)return d;
+  var dx=[],s=[],t=[],i;
+  for(i=0;i<n-1;i++){dx[i]=(P[i+1][0]-P[i][0])||1e-6;s[i]=(P[i+1][1]-P[i][1])/dx[i]}
+  t[0]=s[0];t[n-1]=s[n-2];
+  for(i=1;i<n-1;i++)t[i]=s[i-1]*s[i]<=0?0:(s[i-1]+s[i])/2;
+  for(i=0;i<n-1;i++){
+    if(s[i]===0){t[i]=0;t[i+1]=0}
+    else{var a=t[i]/s[i],b=t[i+1]/s[i],h=a*a+b*b;if(h>9){var k=3/Math.sqrt(h);t[i]=k*a*s[i];t[i+1]=k*b*s[i]}}}
+  for(i=0;i<n-1;i++){var x0=P[i][0],y0=P[i][1],x1=P[i+1][0],y1=P[i+1][1],c=dx[i]/3;
+    d+=' C'+(x0+c).toFixed(1)+' '+(y0+t[i]*c).toFixed(1)+' '+(x1-c).toFixed(1)+' '+(y1-t[i+1]*c).toFixed(1)+' '+x1.toFixed(1)+' '+y1.toFixed(1)}
+  return d}
+/* разрыв линии, если между замерами большой пропуск (страница была закрыта) */
+function segments(pts){
+  var ds=[],i;for(i=1;i<pts.length;i++)ds.push(pts[i][0]-pts[i-1][0]);
+  ds.sort(function(a,b){return a-b});
+  var thr=Math.max(15,(ds.length?ds[Math.floor(ds.length/2)]:0)*3),out=[],cur=[pts[0]];
+  for(i=1;i<pts.length;i++){if(pts[i][0]-pts[i-1][0]>thr){out.push(cur);cur=[]}cur.push(pts[i])}
+  out.push(cur);return out}
+function drawChart(slide){
+  var off=histDay,d=dayAt(off),k=dkey(d),pts=(HIST[k]||[]).slice().sort(function(a,b){return a[0]-b[0]});
+  CH.pts=pts;CH.key=k;
+  $('dLabel').textContent=off===0?'Сегодня':off===1?'Вчера':d.toLocaleDateString('ru-RU',{weekday:'long'});
+  $('dDate').textContent=d.toLocaleDateString('ru-RU',{day:'numeric',month:'long',year:'numeric'});
+  $('dNext').disabled=off===0;$('dToday').disabled=off===0;$('dPrev').disabled=off>=HDAYS-1;
+  var peak=0,pk=0,sum=0;pts.forEach(function(p){if(p[1]>peak){peak=p[1];pk=p[0]}sum+=p[1]});
+  CH.max=niceMax(peak);
+  $('cPeak').textContent=pts.length?peak:'—';$('cPeakT').textContent=pts.length?'в '+fmtM(pk):'';
+  $('cAvg').textContent=pts.length?(Math.round(sum/pts.length*10)/10).toString().replace('.',','):'—';$('cAvgT').textContent=pts.length?'за день':'';
+  var mn=pts.length?Math.min.apply(null,pts.map(function(p){return p[1]})):null,mt=0;if(mn!==null)pts.some(function(p){if(p[1]===mn){mt=p[0];return true}});
+  $('cMin').textContent=mn===null?'—':mn;$('cMinT').textContent=mn===null?'':'в '+fmtM(mt);
+  var cur=off===0&&pts.length?pts[pts.length-1][1]:null;$('cCur').textContent=cur===null?'—':cur;$('cCurT').textContent=cur===null?'':'сейчас';
+  $('chartEmpty').hidden=pts.length>0;
+  var svg=$('chartSvg'),rw=svg.getBoundingClientRect().width;
+  W=rw>40?Math.round(rw):720;H=window.innerWidth<=560?190:230;
+  svg.style.height=H+'px';svg.setAttribute('viewBox','0 0 '+W+' '+H);svg.textContent='';
+  var anim=pts.length>0&&CH.animKey!==k;if(pts.length)CH.animKey=k;
+  var defs=sv('defs',{}),lg=sv('linearGradient',{id:'cg',x1:0,y1:0,x2:0,y2:1});
+  lg.appendChild(sv('stop',{offset:'0%',style:'stop-color:var(--fill);stop-opacity:.16'}));
+  lg.appendChild(sv('stop',{offset:'100%',style:'stop-color:var(--fill);stop-opacity:0'}));
+  defs.appendChild(lg);svg.appendChild(defs);
+  for(var i=0;i<=4;i++){var v=CH.max*i/4,y=Math.round(yOf(v))+.5;
+    svg.appendChild(sv('line',{x1:PL,x2:W-PR,y1:y,y2:y,'class':i?'grid':'grid base'}));
+    var yt=sv('text',{x:PL-12,y:y+4.5,'class':'ytx','text-anchor':'end'});yt.textContent=String(Math.round(v*10)/10);svg.appendChild(yt)}
+  for(var h=0;h<=24;h+=3){var gx=xOf(h*60);
+    if(h>0&&h<24)svg.appendChild(sv('line',{x1:gx,x2:gx,y1:PT,y2:H-PB,'class':'grid vgrid'}));
+    if(h%6===0){var xt=sv('text',{x:gx,y:H-10,'class':'xtx','text-anchor':h===0?'start':h===24?'end':'middle'});xt.textContent=(h<10?'0':'')+h+':00';svg.appendChild(xt)}}
+  if(pts.length){
+    var yb=yOf(0);
+    if(pts.length<=90){var mg=1e9;for(var q=1;q<pts.length;q++)mg=Math.min(mg,xOf(pts[q][0])-xOf(pts[q-1][0]));
+      var bw=Math.max(3,Math.min(14,(pts.length>1?mg:30)*.45));
+      pts.forEach(function(p){var cx=xOf(p[0]),cy=yOf(p[1]);if(p[1]<=0)return;svg.appendChild(sv('rect',{x:(cx-bw/2).toFixed(1),y:cy.toFixed(1),width:bw.toFixed(1),height:Math.max(0,yb-cy).toFixed(1),rx:Math.min(5,bw/2),'class':'col'}))})}
+    segments(pts).forEach(function(sg){
+      var P=sg.map(function(p){return[xOf(p[0]),yOf(p[1])]});
+      if(P.length<2){svg.appendChild(sv('circle',{cx:P[0][0],cy:P[0][1],r:5.5,'class':'lone'}));return}
+      var ld=smooth(P);
+      svg.appendChild(sv('path',{'class':'area'+(anim?' fade':''),d:ld+' L'+P[P.length-1][0].toFixed(1)+' '+yb+' L'+P[0][0].toFixed(1)+' '+yb+' Z'}));
+      svg.appendChild(sv('path',{'class':'line'+(anim?' draw':''),d:ld,pathLength:1}))});
+    if(pts.length>=3&&peak>0){
+      var px=xOf(pk),py=yOf(peak);
+      svg.appendChild(sv('circle',{cx:px,cy:py,r:12,'class':'peakhalo'}));svg.appendChild(sv('circle',{cx:px,cy:py,r:6,'class':'peakdot'}));
+      var pt=sv('text',{x:Math.max(PL+14,Math.min(W-PR-14,px)),y:py-16,'class':'pk'});pt.textContent=peak;svg.appendChild(pt)}
+    var last=pts[pts.length-1],lx=xOf(last[0]),ly=yOf(last[1]);
+    if(off===0)svg.appendChild(sv('circle',{cx:lx,cy:ly,r:7,'class':'live'}));
+    svg.appendChild(sv('circle',{cx:lx,cy:ly,r:7,'class':'lastdot'}));
+  }
+  $('chartNote').hidden=true;
+  var area=$('chartArea');
+  if(slide){area.classList.remove('slide-l','slide-r');void area.offsetWidth;area.classList.add(slide)}
+  hideTip();drawStrip()}
+function drawStrip(){
+  var box=$('dStrip'),days=[],mx=0,sig=String(histDay);
+  for(var o=STRIP-1;o>=0;o--){var d=dayAt(o),a=HIST[dkey(d)]||[],pk=0;a.forEach(function(p){if(p[1]>pk)pk=p[1]});days.push({o:o,d:d,pk:pk,n:a.length});if(pk>mx)mx=pk;sig+='|'+pk}
+  if(CH.sig===sig&&box.children.length)return;CH.sig=sig;box.textContent='';
+  days.forEach(function(x){
+    var lab=x.d.toLocaleDateString('ru-RU',{day:'numeric',month:'long'})+(x.n?' — пик '+x.pk:' — нет данных');
+    var b=el('button','ds'+(x.o===histDay?' act':'')+(x.n?'':' nodata'));b.type='button';
+    b.setAttribute('aria-pressed',String(x.o===histDay));b.setAttribute('aria-label',lab);b.title=lab;
+    var bw=el('span','bw'),bar=el('i','bar');bar.style.height=x.n?Math.max(10,Math.round(x.pk/(mx||1)*100))+'%':'';
+    bw.appendChild(bar);b.appendChild(bw);
+    b.appendChild(el('span','wd',x.d.toLocaleDateString('ru-RU',{weekday:'short'})));
+    b.appendChild(el('span','dn',String(x.d.getDate())));
+    b.addEventListener('click',function(){goTo(x.o)});box.appendChild(b)})}
+function hideTip(){var t=$('chartTip');if(t)t.hidden=true;var c=$('chartSvg').querySelector('.hv');if(c)c.remove()}
+function showTip(clientX){
+  if(!CH.pts.length)return;var svg=$('chartSvg'),r=svg.getBoundingClientRect(),area=$('chartArea').getBoundingClientRect();
+  var vx=clientX-r.left,m=Math.max(0,Math.min(1440,(vx-PL)/(W-PL-PR)*1440)),best=CH.pts[0],bd=1e9;
+  CH.pts.forEach(function(p){var dd=Math.abs(p[0]-m);if(dd<bd){bd=dd;best=p}});
+  var x=xOf(best[0]),y=yOf(best[1]),o=svg.querySelector('.hv');if(o)o.remove();
+  var g=sv('g',{'class':'hv'});
+  g.appendChild(sv('line',{x1:x,x2:x,y1:PT-12,y2:H-PB,'class':'cur'}));
+  g.appendChild(sv('circle',{cx:x,cy:y,r:14,'class':'halo'}));
+  g.appendChild(sv('circle',{cx:x,cy:y,r:6.5,'class':'hdot'}));
+  svg.appendChild(g);
+  var t=$('chartTip');t.textContent='';t.appendChild(document.createTextNode(fmtM(best[0])+' · '));t.appendChild(el('b','',best[1]+' игр.'));
+  t.hidden=false;t.style.left=Math.max(64,Math.min(area.width-64,r.left-area.left+x))+'px';
+  $('cCur').textContent=best[1];$('cCurT').textContent='в '+fmtM(best[0])}
+function goDay(delta){var n=histDay+delta;if(n<0||n>=HDAYS)return;histDay=n;drawChart(delta>0?'slide-r':'slide-l')}
+function goTo(off){if(off===histDay||off<0||off>=HDAYS)return;var s=off<histDay?'slide-l':'slide-r';histDay=off;drawChart(s)}
+function initChart(){
+  histLoad();drawChart();histRemote();setInterval(histRemote,60000);
+  var rt=null;window.addEventListener('resize',function(){clearTimeout(rt);rt=setTimeout(function(){drawChart()},80)});
+  $('dPrev').addEventListener('click',function(){goDay(1)});
+  $('dNext').addEventListener('click',function(){goDay(-1)});
+  $('dToday').addEventListener('click',function(){goTo(0)});
+  var a=$('chartArea'),sx=null,sy=null;
+  a.addEventListener('pointermove',function(e){if(e.pointerType==='touch'&&sx!==null)return;showTip(e.clientX)});
+  a.addEventListener('pointerleave',function(){hideTip();var p=CH.pts,c=(histDay===0&&p.length)?p[p.length-1][1]:null;$('cCur').textContent=c===null?'—':c;$('cCurT').textContent=c===null?'':'сейчас'});
+  a.addEventListener('keydown',function(e){if(e.key==='ArrowLeft'){e.preventDefault();goDay(1)}else if(e.key==='ArrowRight'){e.preventDefault();goDay(-1)}});
+  a.addEventListener('touchstart',function(e){var t=e.touches[0];sx=t.clientX;sy=t.clientY},{passive:true});
+  a.addEventListener('touchend',function(e){if(sx===null)return;var t=e.changedTouches[0],dx=t.clientX-sx,dy=t.clientY-sy;sx=null;
+    if(Math.abs(dx)>50&&Math.abs(dx)>Math.abs(dy)*1.5)goDay(dx>0?1:-1);else showTip(t.clientX)},{passive:true});
+}
+
+/* Races */
+function avatar(r,cls){var d=el('div',cls),im=el('img','av');im.src=r.img;im.alt='';im.width=16;im.height=16;d.appendChild(im);return d}
+function traitCol(title,list,cls){var c=el('div','trc '+cls);c.appendChild(el('h4','',title));var ul=el('ul');
+  list.forEach(function(x){ul.appendChild(el('li','',x))});c.appendChild(ul);return c}
+function showRace(i){
+  var r=RACES[i],box=$('rd');box.innerHTML='';box.style.setProperty('--rc',r.c);
+  var h=el('div','rd-head');h.appendChild(avatar(r,'avt'));
+  var t=el('div');t.appendChild(el('h3','',r.n));t.appendChild(el('div','rstyle',r.s));h.appendChild(t);box.appendChild(h);
+  box.appendChild(el('p','rdesc',r.d));
+  var tr=el('div','tr');tr.appendChild(traitCol('Сильные стороны',r.t,'pro'));
+  if(r.w&&r.w.length)tr.appendChild(traitCol('Слабости',r.w,'con'));else tr.style.gridTemplateColumns='1fr';
+  box.appendChild(tr);
+  box.classList.remove('swap');void box.offsetWidth;box.classList.add('swap');
+  [].forEach.call($('rl').children,function(b,k){b.setAttribute('aria-pressed',String(k===i))})}
+function initRaces(){
+  RACES.forEach(function(r,i){
+    var b=el('button','rb');b.type='button';b.style.setProperty('--rc',r.c);
+    b.appendChild(avatar(r,'avt'));b.appendChild(el('span','',r.n));
+    b.setAttribute('aria-label','Раса '+r.n);b.setAttribute('aria-pressed','false');
+    b.addEventListener('click',function(){showRace(i)});$('rl').appendChild(b)});
+  $('rl').addEventListener('keydown',function(e){
+    var b=[].slice.call($('rl').children),i=b.indexOf(document.activeElement);if(i<0)return;
+    var n=e.key==='ArrowRight'?i+1:e.key==='ArrowLeft'?i-1:-1;
+    if(n<0||n>=b.length)return;e.preventDefault();b[n].focus();showRace(n)});
+  showRace(0)}
+
+/* Rules: подсветка текущего раздела в оглавлении */
+function initRules(){
+  var links={};document.querySelectorAll('#rtoc a').forEach(function(a){links[a.getAttribute('href').split('/').pop()]=a});
+  if(!('IntersectionObserver' in window))return;
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;
+    Object.keys(links).forEach(function(k){links[k].classList.toggle('act',k===e.target.id)})})},{rootMargin:'-25% 0px -65% 0px'});
+  Object.keys(links).forEach(function(k){var x=$(k);if(x)io.observe(x)})}
+
+/* Nav / progress */
+function initNav(){
+  function menu(o){$('menu').classList.toggle('open',o);$('burger').setAttribute('aria-expanded',String(o))}
+  $('burger').addEventListener('click',function(){menu(!$('menu').classList.contains('open'))});
+  document.querySelectorAll('#menu a').forEach(function(a){a.addEventListener('click',function(){menu(false)})});
+  document.addEventListener('keydown',function(e){if(e.key==='Escape')menu(false)});
+  document.addEventListener('click',function(e){if($('menu').classList.contains('open')&&!e.target.closest('header'))menu(false)});
+  var links={};document.querySelectorAll('#menu a').forEach(function(a){var id=a.getAttribute('href').slice(1);links[id]=a});
+  var rv=document.querySelectorAll('.rv');
+  if(!('IntersectionObserver' in window)){rv.forEach(function(x){x.classList.add('in')});return}
+  var io=new IntersectionObserver(function(es){es.forEach(function(e){if(!e.isIntersecting)return;
+    Object.keys(links).forEach(function(k){var on=k===e.target.id;links[k].classList.toggle('act',on)})})},{rootMargin:'-40% 0px -50% 0px'});
+  Object.keys(links).forEach(function(k){var x=$(k);if(x)io.observe(x)});
+  var ro=new IntersectionObserver(function(es){es.forEach(function(e){if(e.isIntersecting){e.target.classList.add('in');ro.unobserve(e.target)}})},{threshold:.1});
+  rv.forEach(function(x){ro.observe(x)});
+}
+function initProgress(){
+  var bar=$('progress'),t=false;
+  function upd(){t=false;var h=document.documentElement.scrollHeight-window.innerHeight;bar.style.width=(h>0?Math.min(100,window.scrollY/h*100):0)+'%'}
+  window.addEventListener('scroll',function(){if(!t){t=true;requestAnimationFrame(upd)}},{passive:true});upd();
+}
+
+
+function initToTop(){var b=$('totop');if(!b)return;
+  window.addEventListener('scroll',function(){b.classList.toggle('show',window.scrollY>700)},{passive:true});
+  b.addEventListener('click',function(){window.scrollTo({top:0,behavior:'smooth'})})}
+
+var WD=['Пн','Вт','Ср','Чт','Пт','Сб','Вс'];
+function statAgg(){var hr=[],wd=[],i,j;for(i=0;i<24;i++)hr.push({s:0,n:0});for(i=0;i<7;i++){wd.push([]);for(j=0;j<24;j++)wd[i].push({s:0,n:0})}
+  var A={hr:hr,wd:wd,cnt:0,rec:0,recK:'',recM:0,days:{},keys:Object.keys(HIST).sort()};
+  A.keys.forEach(function(k){var p=k.split('-'),w=(new Date(+p[0],+p[1]-1,+p[2]).getDay()+6)%7,d={pk:0,s:0,n:0};
+    HIST[k].forEach(function(x){var h=Math.min(23,Math.floor(x[0]/60)),v=x[1];hr[h].s+=v;hr[h].n++;wd[w][h].s+=v;wd[w][h].n++;d.s+=v;d.n++;if(v>d.pk)d.pk=v;A.cnt++;if(v>A.rec){A.rec=v;A.recK=k;A.recM=x[0]}});
+    d.w=w;A.days[k]=d});return A}
+function avg(o){return o.n?o.s/o.n:0}
+function fd(k){var p=k.split('-');return p[2]+'.'+p[1]+'.'+p[0]}
+function updateTeaser(){if(!$('tzNow'))return;var k=dkey(new Date()),a=statAgg(),d=a.days[k],pl=$('pl');
+  $('tzNow').textContent=pl&&/^\d+$/.test(pl.textContent)?pl.textContent:'—';$('tzPeak').textContent=d?d.pk:'—';$('tzRec').textContent=a.cnt?a.rec:'—'}
+function renderStats(){if(!$('kpis'))return;var A=statAgg(),i,j,h='',pl=$('pl'),k7=dkey(new Date(Date.now()-6*864e5)),s7=0,n7=0,bh=0,bhv=-1,bw=0,bwv=-1,mx=0;
+  Object.keys(A.days).forEach(function(k){if(k>=k7){s7+=A.days[k].s;n7+=A.days[k].n}});
+  for(i=0;i<24;i++){var v=avg(A.hr[i]);if(v>bhv){bhv=v;bh=i}}
+  var wa=[];for(i=0;i<7;i++){var t={s:0,n:0};A.wd[i].forEach(function(c){t.s+=c.s;t.n+=c.n});wa.push(avg(t));if(wa[i]>bwv){bwv=wa[i];bw=i}}
+  var has=A.cnt>0,K=[['Сейчас онлайн',pl&&/^\d+$/.test(pl.textContent)?pl.textContent:'—','на сервере'],
+   ['Рекорд',has?A.rec:'—',has?fd(A.recK)+' в '+fmtM(A.recM):''],
+   ['Среднее за 7 дней',n7?(s7/n7).toFixed(1):'—','игроков'],
+   ['Самый людный час',has?(bh<10?'0':'')+bh+':00':'—',has?'в среднем '+bhv.toFixed(1):''],
+   ['Лучший день недели',has?WD[bw]:'—',has?'в среднем '+bwv.toFixed(1):''],
+   ['Собрано данных',A.cnt,A.keys.length+' дн.']];
+  $('kpis').innerHTML=K.map(function(x){return '<div class="kpi"><span class="lbl">'+x[0]+'</span><b>'+x[1]+'</b><small>'+x[2]+'</small></div>'}).join('');
+  for(i=0;i<7;i++)for(j=0;j<24;j++)mx=Math.max(mx,avg(A.wd[i][j]));
+  h='<div class="hl"></div>';for(j=0;j<24;j+=1)h+='<div class="hx">'+(j%3===0?j:'')+'</div>';
+  for(i=0;i<7;i++){h+='<div class="hl">'+WD[i]+'</div>';for(j=0;j<24;j++){var c=avg(A.wd[i][j]);h+='<div class="hc" style="--v:'+(mx?(c/mx).toFixed(2):0)+'" title="'+WD[i]+' '+j+':00 — в среднем '+c.toFixed(1)+'"></div>'}}
+  $('heat').innerHTML=h;
+  var hm=0;for(i=0;i<24;i++)hm=Math.max(hm,avg(A.hr[i]));
+  $('hbars').innerHTML=A.hr.map(function(x,i){var v=avg(x);return '<div class="hb" title="'+i+':00 — '+v.toFixed(1)+'"><i style="height:'+(hm?Math.max(v/hm*100,2):2)+'%"></i><span>'+(i%4===0?i:'')+'</span></div>'}).join('');
+  var wm=Math.max.apply(null,wa.concat([0]));
+  $('wbars').innerHTML=wa.map(function(v,i){return '<div class="wb"><span>'+WD[i]+'</span><div><i style="width:'+(wm?v/wm*100:0)+'%"></i></div><b>'+v.toFixed(1)+'</b></div>'}).join('');
+  var ks=A.keys.slice(-7).reverse(),pm=0;ks.forEach(function(k){pm=Math.max(pm,A.days[k].pk)});
+  $('dtab').innerHTML=ks.length?ks.map(function(k){var d=A.days[k];return '<div class="dr"><span>'+WD[d.w]+', '+fd(k).slice(0,5)+'</span><div><i style="width:'+(pm?d.pk/pm*100:0)+'%"></i></div><b>пик '+d.pk+'</b><em>ср. '+(d.s/d.n).toFixed(1)+'</em></div>'}).join(''):'<p class="sx-s">Пока нет данных.</p>';
+  $('sxNote').textContent=has?'':'Данные накапливаются, пока сайт открыт. Чем дольше собирается история, тем точнее карта и средние значения.'}
+function initStats(){updateTeaser();setInterval(function(){updateTeaser();if(document.documentElement.getAttribute('data-page')==='stats')renderStats()},10000)}
+[initStats,initToTop,initTheme,initCopy,initProgress,initRaces,initRules,initNav,initRoute,initReveal,initParticles,initChart,initStatus].forEach(function(f){try{f()}catch(e){console.error(e)}});
+</script>
+</body>
+</html>
